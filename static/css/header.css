@@ -1,0 +1,47 @@
+@import "colors.css";
+
+.header {
+    background-color: var(--primary);
+    width: 100%;
+    min-height: 50px;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    padding: 10px;
+    border-bottom: 2px solid var(--secondary);
+}
+
+.header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.header-left h1 {
+    color: var(--secondary);
+}
+
+.header-right {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.header-right h2 {
+    color: var(--text);
+    transition: 0.25s;
+}
+
+.header-right h2:hover {
+    color: var(--secondary);
+}
+
+.active {}
+
+.active h2 {
+    color: var(--secondary)!important;;
+}

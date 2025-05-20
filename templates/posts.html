@@ -1,0 +1,5 @@
+{{ template "base.start" . }}
+{{ range .Posts }}
+    {{ template "post" . }}
+{{ end }}
+{{ template "base.end" . }}

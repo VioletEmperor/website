@@ -1,0 +1,42 @@
+services:
+  website:
+    depends_on:
+      - database
+    build:
+      context: ./
+    container_name: website
+    hostname: website
+    environment:
+      - URL=${DATABASE_URL:?database url not set}
+      - PORT=8080
+    networks:
+      - mynet
+    ports:
+      - "80:8080"
+    deploy:
+      restart_policy:
+        condition: on-failure
+  database:
+    environment:
+      - POSTGRES_USER=docker
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?database password not set}
+      - POSTGRES_DB=database
+    build:
+      context: ./database
+    container_name: database
+    hostname: database
+    networks:
+      - mynet
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - website-volume:/var/lib/postgresql/data
+
+networks:
+  mynet:
+    driver: bridge
+
+volumes:
+  website-volume:

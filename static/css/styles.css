@@ -1,0 +1,34 @@
+@import "header.css";
+@import "footer.css";
+@import "form.css";
+
+h1, h2, h3, h4, h5, h6, p, label {
+    color: var(--text);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    min-height: 100%;
+    height: fit-content;
+    flex: 1;
+    align-self: center;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background: var(--primary);
+}
+
+a {
+    text-decoration: none;
+}

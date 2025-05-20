@@ -1,27 +1,46 @@
 package main
 
 import (
-	"html/template"
-	"log"
-	"net/http"
+    "log"
+    "net/http"
+    "website/posts_repository"
 )
 
-type Page struct {
-	Title string
-}
-
-func handler(w http.ResponseWriter, r *http.Request) {
-	file, err := template.ParseFiles("index.html")
-	if err != nil {
-		return
-	}
-	err = file.Execute(w, Page{Title: "lol"})
-	if err != nil {
-		return
-	}
-}
-
 func main() {
-	http.HandleFunc("/", handler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+    log.Println("starting server...")
+
+    config, err := getConfig()
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    templates := parse()
+
+    pool, err := connect(config.URL)
+
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    defer pool.Close()
+
+    repo := posts_repository.New(pool)
+
+    router := http.NewServeMux()
+
+    server := &http.Server{
+        Addr:    ":" + config.Port,
+        Handler: router,
+    }
+
+    fs := http.FileServer(http.Dir("static"))
+
+    router.HandleFunc("/", rootHandler)
+    router.HandleFunc("/about", aboutHandler(templates))
+    router.HandleFunc("/posts", postsHandler(repo, templates))
+    router.HandleFunc("/contact", contactHandler(templates))
+    router.Handle("/static/", http.StripPrefix("/static/", fs))
+
+    log.Fatal(server.ListenAndServe())
 }
