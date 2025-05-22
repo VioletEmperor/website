@@ -6,8 +6,8 @@ import (
     "github.com/jackc/pgx/v5/pgxpool"
 )
 
-func connect(url string) (*pgxpool.Pool, error) {
-    pool, err := pgxpool.New(context.Background(), url)
+func connect(ctx context.Context, url string) (*pgxpool.Pool, error) {
+    pool, err := pgxpool.New(ctx, url)
 
     if err != nil {
         return nil, fmt.Errorf("error connecting to database: %v", err)
