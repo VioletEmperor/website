@@ -4,6 +4,13 @@ services:
       - database
     build:
       context: ./
+    develop:
+      watch:
+        - action: rebuild
+          path: .
+          target: .
+          ignore:
+            - go.mod
     container_name: website
     hostname: website
     environment:

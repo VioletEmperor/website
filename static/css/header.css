@@ -9,6 +9,8 @@
     flex-direction: row;
     padding: 10px;
     border-bottom: 2px solid var(--secondary);
+    position: fixed;
+    opacity: 90%;
 }
 
 .header-left {
