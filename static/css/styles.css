@@ -36,11 +36,15 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background: var(--primary);
+    background-image: url('/static/images/background.png');
 }
 
 a {
     text-decoration: none;
+}
+
+li {
+    color: var(--text);
 }
 
 .about {
@@ -80,7 +84,7 @@ a {
 }
 
 .about > div > a:hover {
-    background-color: var(--secondary);
+    background-color: var(--tertiary);
     color: var(--primary);
 }
 

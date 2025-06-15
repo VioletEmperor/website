@@ -2,14 +2,18 @@ package main
 
 import (
     "context"
-    "html/template"
+    "errors"
     "log"
     "net/http"
     "os"
     "os/signal"
     "syscall"
-    "website/middleware"
-    "website/posts_repository"
+    "website/internal/config"
+    "website/internal/database"
+    "website/internal/handlers"
+    "website/internal/middleware"
+    "website/internal/parse"
+    "website/internal/posts"
 )
 
 func main() {
@@ -22,8 +26,8 @@ func main() {
     signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
     go func() {
-        if err := run(ctx, cancel); err != nil {
-            log.Fatal(err)
+        if err := run(ctx, cancel); !errors.Is(err, http.ErrServerClosed) {
+            log.Fatalf("server error: %v", err)
         }
     }()
 
@@ -32,52 +36,44 @@ func main() {
     log.Println("shutting down server...")
 }
 
-type Env struct {
-    PostsRepository posts_repository.PostsRepository
-    Templates       map[string]*template.Template
-}
-
 func run(ctx context.Context, cancel context.CancelFunc) error {
     defer cancel()
 
-    config, err := getConfig()
+    conf, err := config.GetConfig()
 
     if err != nil {
         return err
     }
 
-    templates := parse()
+    templates := parse.Parse()
 
-    pool, err := connect(ctx, config.URL)
+    pool, err := database.Connect(ctx, conf.URL)
 
     if err != nil {
         return err
     }
 
-    repo := posts_repository.New(pool)
+    repo := posts.New(pool)
 
-    env := Env{repo, templates}
+    env := handlers.Env{PostsRepository: repo, Templates: templates}
 
     router := http.NewServeMux()
 
+    mid := middleware.Stack(middleware.EnableCors, middleware.Logger)
+
     server := &http.Server{
-        Addr: ":" + config.Port,
-        Handler: middleware.Stack(
-            router,
-            middleware.EnforceJSON,
-            middleware.EnableCors,
-            middleware.Logger),
+        Addr:    ":" + conf.Port,
+        Handler: mid(router),
     }
 
     fs := http.FileServer(http.Dir("static"))
 
-    router.HandleFunc("/", env.rootHandler)
-    router.HandleFunc("/about", env.aboutHandler)
-    router.HandleFunc("/blog/posts", env.postsHandler)
-    router.HandleFunc("/contact", env.contactHandler)
-    router.Handle("/static/", http.StripPrefix("/static/", fs))
+    router.HandleFunc("GET /", env.RootHandler)
+    router.HandleFunc("GET /about", env.AboutHandler)
+    router.HandleFunc("GET /blog/posts", env.PostsHandler)
+    router.HandleFunc("GET /contact", env.ContactHandler)
 
-    addRoutes(router)
+    router.Handle("GET /static/", http.StripPrefix("/static/", fs))
 
     if err := server.ListenAndServe(); err != nil {
         return err

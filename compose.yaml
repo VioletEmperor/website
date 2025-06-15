@@ -14,7 +14,10 @@ services:
     container_name: website
     hostname: website
     environment:
-      - URL=${DATABASE_URL:?database url not set}
+      - DB_HOST=${DB_HOST:?database host not set}
+      - DB_NAME=${DB_NAME:?database name not set}
+      - DB_USER=${DB_USER:?database user not set}
+      - DB_PASSWORD=${DB_PASSWORD:?database password not set}
       - PORT=8080
     networks:
       - mynet
@@ -25,9 +28,9 @@ services:
         condition: on-failure
   database:
     environment:
-      - POSTGRES_USER=docker
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?database password not set}
-      - POSTGRES_DB=database
+      - POSTGRES_USER=${DB_USER:?database password not set}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:?database password not set}
+      - POSTGRES_DB=${DB_NAME:?database password not set}
     build:
       context: ./database
     container_name: database

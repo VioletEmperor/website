@@ -1,6 +1,6 @@
-package posts_repository
+package posts
 
-type PostsRepository interface {
+type Repository interface {
     GetPost(id int) (*Post, error)
     GetPosts() ([]Post, error)
 }

@@ -1,3 +1,7 @@
+DROP SCHEMA IF EXISTS public CASCADE;
+
+CREATE SCHEMA IF NOT EXISTS public;
+
 CREATE TABLE public.posts (
     id serial primary key,
     title varchar(80),

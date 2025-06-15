@@ -1,5 +1,6 @@
 :root {
-    --primary: #000000;
+    --primary: black;
     --secondary: #A154E8;
-    --text: #FFFFFF;
+    --tertiary: gold;
+    --text: white;
 }

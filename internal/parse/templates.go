@@ -1,8 +1,8 @@
-package main
+package parse
 
 import "html/template"
 
-func parse() map[string]*template.Template {
+func Parse() map[string]*template.Template {
     templates := map[string]*template.Template{}
 
     templates["about.html"] = template.Must(template.ParseFiles(

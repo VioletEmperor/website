@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
     "context"
@@ -6,7 +6,7 @@ import (
     "github.com/jackc/pgx/v5/pgxpool"
 )
 
-func connect(ctx context.Context, url string) (*pgxpool.Pool, error) {
+func Connect(ctx context.Context, url string) (*pgxpool.Pool, error) {
     pool, err := pgxpool.New(ctx, url)
 
     if err != nil {

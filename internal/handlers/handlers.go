@@ -1,14 +1,14 @@
-package main
+package handlers
 
 import (
     "log"
     "net/http"
-    "website/posts_repository"
+    "website/internal/posts"
 )
 
-func (env Env) postsHandler(w http.ResponseWriter, r *http.Request) {
+func (env Env) PostsHandler(w http.ResponseWriter, r *http.Request) {
     type Data struct {
-        Posts  []posts_repository.Post
+        Posts  []posts.Post
         Active string
     }
 
@@ -16,7 +16,7 @@ func (env Env) postsHandler(w http.ResponseWriter, r *http.Request) {
 
     w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
 
-    posts, err := env.PostsRepository.GetPosts()
+    list, err := env.PostsRepository.GetPosts()
 
     if err != nil {
         w.WriteHeader(http.StatusInternalServerError)
@@ -24,7 +24,7 @@ func (env Env) postsHandler(w http.ResponseWriter, r *http.Request) {
         return
     }
 
-    err = env.Templates["posts.html"].ExecuteTemplate(w, "posts.html", Data{posts, "posts"})
+    err = env.Templates["posts.html"].ExecuteTemplate(w, "posts.html", Data{list, "posts"})
 
     if err != nil {
         w.WriteHeader(http.StatusInternalServerError)
@@ -33,7 +33,7 @@ func (env Env) postsHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func (env Env) aboutHandler(w http.ResponseWriter, r *http.Request) {
+func (env Env) AboutHandler(w http.ResponseWriter, r *http.Request) {
     type Data struct {
         Active string
     }
@@ -49,11 +49,11 @@ func (env Env) aboutHandler(w http.ResponseWriter, r *http.Request) {
     }
 }
 
-func (env Env) rootHandler(w http.ResponseWriter, r *http.Request) {
+func (env Env) RootHandler(w http.ResponseWriter, r *http.Request) {
     http.Redirect(w, r, "/about", http.StatusFound)
 }
 
-func (env Env) contactHandler(w http.ResponseWriter, r *http.Request) {
+func (env Env) ContactHandler(w http.ResponseWriter, r *http.Request) {
     type Data struct {
         Active string
     }
