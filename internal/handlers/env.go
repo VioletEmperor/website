@@ -1,11 +1,11 @@
 package handlers
 
 import (
-    "html/template"
-    "website/internal/posts"
+	"html/template"
+	"website/internal/posts"
 )
 
 type Env struct {
-    PostsRepository posts.Repository
-    Templates       map[string]*template.Template
+	PostsRepository posts.Repository
+	Templates       map[string]*template.Template
 }

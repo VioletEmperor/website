@@ -1,11 +1,7 @@
 {{ template "base.start" . }}
-<div class="login-bar">
-    <a href="/login"><h5>Log In</h5></a>
-    <a href="/signup"><h5>Sign Up</h5></a>
-</div>
 <div class="main">
-    {{ range .Posts }}
-        {{ template "post" . }}
-    {{ end }}
+  {{ range .Posts }}
+  {{ template "post" . }}
+  {{ end }}
 </div>
 {{ template "base.end" . }}

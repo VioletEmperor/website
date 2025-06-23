@@ -2,10 +2,7 @@ module website
 
 go 1.24
 
-require (
-	github.com/jackc/pgx/v5 v5.7.5
-	github.com/pashagolub/pgxmock/v4 v4.7.0
-)
+require github.com/jackc/pgx/v5 v5.7.5
 
 require (
 	github.com/jackc/pgpassfile v1.0.0 // indirect
