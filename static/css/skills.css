@@ -1,0 +1,49 @@
+.skills {
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px;
+}
+
+.skills > h1 {
+  font-size: 2rem;
+}
+
+.skills > div {
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+  grid-template-columns: repeat(3,minmax(0,1fr));
+}
+
+.skills > div > div {
+  color: white;
+  min-height: 175px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: blueviolet;
+  padding: 20px;
+  height: 100%;
+  border-radius: 10px;
+}
+
+.skills > div > div > img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 15px;
+}
+
+.skills > div > div > h2 {
+  margin: 0;
+  text-align: center;
+}

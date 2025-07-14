@@ -1,0 +1,170 @@
+.projects {
+  width: 100%;
+  margin: 40px 0;
+}
+
+.projects h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--text);
+  font-size: 2rem;
+}
+
+.carousel-container {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+.carousel-item {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 1;
+  transform: translateX(100%);
+  transition: transform 0.6s ease-in-out;
+}
+
+.carousel-item.active {
+  transform: translateX(0);
+}
+
+.carousel-item.slide-out-left {
+  transform: translateX(-100%);
+}
+
+.carousel-item.slide-in-right {
+  transform: translateX(100%);
+}
+
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+.project-card {
+  padding: 40px;
+  text-align: center;
+  border: 2px solid var(--secondary);
+  border-radius: 15px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.project-card h3 {
+  color: var(--secondary);
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+.project-card p {
+  color: var(--text);
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.project-tech {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.project-tech span {
+  background-color: var(--secondary);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  padding: 0 20px;
+}
+
+.carousel-btn {
+  background-color: var(--secondary);
+  color: white;
+  border: none;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-btn:hover {
+  background-color: var(--tertiary);
+  color: var(--primary);
+  transform: scale(1.1);
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 15px;
+}
+
+.dot {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot.active,
+.dot:hover {
+  background-color: var(--secondary);
+}
+
+@media (max-width: 768px) {
+  .project-card {
+    padding: 25px;
+  }
+  
+  .carousel-controls {
+    padding: 0 10px;
+  }
+  
+  .carousel-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
