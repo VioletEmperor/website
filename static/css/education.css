@@ -1,34 +1,66 @@
 .education {
   width: 100%;
   margin: 40px 0;
-  text-align: center;
 }
 
 .education h1 {
+  text-align: center;
+  margin-bottom: 30px;
   color: var(--text);
   font-size: 2rem;
-  margin-bottom: 30px;
 }
 
-.education-card {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: 15px;
-  padding: 30px;
-  border: 2px solid var(--secondary);
-  max-width: 500px;
-  margin: 0 auto;
+.education-entry {
+  padding: 25px;
+  margin-bottom: 20px;
+  border-left: 2px solid var(--secondary);
 }
 
-.education-card p:first-of-type {
+.education-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.education-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.education-info {
+  flex: 1;
+}
+
+.education-info h2 {
   color: var(--secondary);
-  font-size: 1.8rem;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-size: 1.5rem;
+  margin: 0 0 5px 0;
 }
 
-.education-card p:last-of-type {
+.education-info p {
   color: var(--tertiary);
-  font-size: 1.2rem;
   font-weight: 500;
+  margin: 0;
   font-style: italic;
+}
+
+@media (max-width: 768px) {
+  .education-header {
+    gap: 12px;
+  }
+  
+  .education-logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .education-info h2 {
+    font-size: 1.3rem;
+  }
+  
+  .education-entry {
+    padding: 20px;
+  }
 }

@@ -4,12 +4,14 @@
   <div class="about">
     <h1>Hello, I'm Adam Shkolnik</h1>
     <p>
-      I am a software engineer.
-      I am experienced in multiple areas of software engineering,
-      including front-end development, cloud platforms, and automation.
+      I am a software engineer with a year of experience working in multiple
+      areas of software engineering including front-end web development,
+      cloud platform administration, and automation. I specialize in designing
+      user interfaces and improving them through careful consideration of
+      design standards and data.
     </p>
     <div>
-      <a href="https://adamshkolnik.com">Download Resume</a>
+      <a href="https://drive.google.com/file/d/1BjDysn6QpuiokeFEDJseJ6OuW_IHYZ_t/view?usp=sharing">Download Resume</a>
       <a href="/contact">Contact Me</a>
     </div>
   </div>
@@ -44,9 +46,14 @@
   </div>
   <div class="experience">
     <h1>Experience</h1>
-    <div>
-      <h2>Federal Reserve Bank of Chicago</h2>
-      <p>Computer Science Intern | Jun 2024 - Aug 2024</p>
+    <div class="job-entry">
+      <div class="job-header">
+        <img src="/static/images/fed.svg" alt="Federal Reserve Bank Logo" class="job-logo" />
+        <div class="job-info">
+          <h2>Federal Reserve Bank of Chicago</h2>
+          <p>Software Engineer Intern | Jun 2024 - Aug 2024</p>
+        </div>
+      </div>
       <ul>
         <li>
           Supported the migration to SharePoint Online by recreating automation workflows in Power
@@ -62,9 +69,14 @@
         </li>
       </ul>
     </div>
-    <div>
-      <h2>Chicago Transit Authority</h2>
-      <p>Computer Science Intern | Jan 2024 - Apr 2024</p>
+    <div class="job-entry">
+      <div class="job-header">
+        <img src="/static/images/cta.svg" alt="Chicago Transit Authority Logo" class="job-logo" />
+        <div class="job-info">
+          <h2>Chicago Transit Authority</h2>
+          <p>Software Engineer Intern | Jan 2024 - Apr 2024</p>
+        </div>
+      </div>
       <ul>
         <li>
           Supported the migration to SharePoint Online by recreating automation workflows in Power
@@ -80,9 +92,14 @@
         </li>
       </ul>
     </div>
-    <div>
-      <h2>Federal Reserve Bank of Chicago</h2>
-      <p>Computer Science Intern | Jun 2023 - Aug 2023</p>
+    <div class="job-entry">
+      <div class="job-header">
+        <img src="/static/images/fed.svg" alt="Federal Reserve Bank Logo" class="job-logo" />
+        <div class="job-info">
+          <h2>Federal Reserve Bank of Chicago</h2>
+          <p>Software Engineer Intern | Jun 2023 - Aug 2023</p>
+        </div>
+      </div>
       <ul>
         <li>
           Supported the migration to SharePoint Online by recreating automation workflows in Power
@@ -101,9 +118,14 @@
   </div>
   <div class="education">
     <h1>Education</h1>
-    <div class="education-card">
-      <p>Loyola University Chicago</p>
-      <p>B.S in Computer Science | Aug 2021 - Dec 2024</p>
+    <div class="education-entry">
+      <div class="education-header">
+        <img src="/static/images/loyola.png" alt="Loyola University Chicago Logo" class="education-logo" />
+        <div class="education-info">
+          <h2>Loyola University Chicago</h2>
+          <p>B.S in Computer Science | Aug 2021 - Dec 2024</p>
+        </div>
+      </div>
     </div>
   </div>
   <div class="projects">
@@ -113,37 +135,40 @@
         <div class="carousel-item active">
           <div class="project-card">
             <h3>Portfolio Website</h3>
-            <p>A responsive personal portfolio website built with Go, PostgreSQL, and HTML/CSS. Features server-side
-              rendering, blog functionality, and modern design.</p>
+            <p>A responsive personal portfolio website built with Go, PostgreSQL, and Javascript/HTML/CSS.
+              Features server-side rendering and blog functionality.</p>
             <div class="project-tech">
               <span>Go</span>
+              <span>Javascript</span>
               <span>PostgreSQL</span>
-              <span>HTML/CSS</span>
               <span>Docker</span>
+              <span>GCP</span>
+              <span>Terraform</span>
             </div>
           </div>
         </div>
         <div class="carousel-item">
           <div class="project-card">
             <h3>Online Chess</h3>
-            <p>A real-time multiplayer chess game with user authentication, game history, and spectator mode. Built with
-              modern web technologies.</p>
+            <p>A real-time multiplayer chess game with user authentication and game history.
+              Built with Kotlin and Jetpack Compose.
+              Deployed on Google Kubernetes Engine.</p>
             <div class="project-tech">
-              <span>JavaScript</span>
-              <span>WebSocket</span>
-              <span>Node.js</span>
-              <span>MongoDB</span>
+              <span>Kotlin</span>
+              <span>Jetpack Compose</span>
+              <span>Kubernetes</span>
+              <span>Websockets</span>
             </div>
           </div>
         </div>
       </div>
       <div class="carousel-controls">
-        <button class="carousel-btn prev" onclick="changeSlide(-1)">‹</button>
+        <button class="carousel-btn prev" onclick="prevSlide()">‹</button>
         <div class="carousel-dots">
-          <span class="dot active" onclick="currentSlide(1)"></span>
-          <span class="dot" onclick="currentSlide(2)"></span>
+          <span class="dot" onclick="showSlide(0)"></span>
+          <span class="dot" onclick="showSlide(1)"></span>
         </div>
-        <button class="carousel-btn next" onclick="changeSlide(1)">›</button>
+        <button class="carousel-btn next" onclick="nextSlide()">›</button>
       </div>
     </div>
   </div>

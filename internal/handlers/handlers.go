@@ -58,6 +58,18 @@ func (env Env) ContactHandler(w http.ResponseWriter, r *http.Request) {
 		Active string
 	}
 
+	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
+
+	err := env.Templates["contact.html"].ExecuteTemplate(w, "contact.html", Data{"contact"})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("failed to execute template:", err)
+		return
+	}
+}
+
+func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 	type Form struct {
 		Name    string
 		Email   string
@@ -67,57 +79,45 @@ func (env Env) ContactHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
 
-	if r.Method == "GET" {
-		err := env.Templates["contact.html"].ExecuteTemplate(w, "contact.html", Data{"contact"})
+	message := Form{}
 
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to execute template:", err)
-			return
-		}
-	} else if r.Method == "POST" {
-		message := Form{}
+	message.Name = r.FormValue("name")
+	message.Email = r.FormValue("email")
+	message.Subject = r.FormValue("subject")
+	message.Message = r.FormValue("message")
 
-		message.Name = r.FormValue("name")
-		message.Email = r.FormValue("email")
-		message.Subject = r.FormValue("subject")
-		message.Message = r.FormValue("message")
+	//apiKey := "re_P3QqiWE3_KgDshnx3fADzeRg2hhyHsw1t"
+	//
+	//client := resend.NewClient(apiKey)
+	//
+	//params := &resend.SendEmailRequest{
+	//  From:        "contact@adamshkolnik.com",
+	//  To:          []string{message.Email},
+	//  Subject:     fmt.Sprintf("Message From %s Has Been Received Successfully!", message.Name),
+	//  Bcc:         nil,
+	//  Cc:          []string{"adam.shkolnik@outlook.com"},
+	//  ReplyTo:     "",
+	//  Html:        fmt.Sprintf("<html><body><strong>%s</strong>\n<p>%s</p></body></html>", message.Subject, message.Message),
+	//  Text:        "",
+	//  Tags:        nil,
+	//  Attachments: nil,
+	//  Headers:     nil,
+	//  ScheduledAt: "",
+	//}
+	//
+	//sent, err := client.Emails.Send(params)
+	//
+	//if err != nil {
+	//  w.WriteHeader(http.StatusInternalServerError)
+	//  log.Println("failed to send email:", err)
+	//  return
+	//}
+	//
+	//log.Printf("sent: %s", sent.Id)
 
-		//apiKey := "re_P3QqiWE3_KgDshnx3fADzeRg2hhyHsw1t"
-		//
-		//client := resend.NewClient(apiKey)
-		//
-		//params := &resend.SendEmailRequest{
-		//  From:        "contact@adamshkolnik.com",
-		//  To:          []string{message.Email},
-		//  Subject:     fmt.Sprintf("Message From %s Has Been Received Successfully!", message.Name),
-		//  Bcc:         nil,
-		//  Cc:          []string{"adam.shkolnik@outlook.com"},
-		//  ReplyTo:     "",
-		//  Html:        fmt.Sprintf("<html><body><strong>%s</strong>\n<p>%s</p></body></html>", message.Subject, message.Message),
-		//  Text:        "",
-		//  Tags:        nil,
-		//  Attachments: nil,
-		//  Headers:     nil,
-		//  ScheduledAt: "",
-		//}
-		//
-		//sent, err := client.Emails.Send(params)
-		//
-		//if err != nil {
-		//  w.WriteHeader(http.StatusInternalServerError)
-		//  log.Println("failed to send email:", err)
-		//  return
-		//}
-		//
-		//log.Printf("sent: %s", sent.Id)
-
-		if err := env.Templates["submit.html"].ExecuteTemplate(w, "submit.html", message); err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			log.Println("failed to execute template:", err)
-			return
-		}
-	} else {
-
+	if err := env.Templates["submit.html"].ExecuteTemplate(w, "submit.html", message); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("failed to execute template:", err)
+		return
 	}
 }

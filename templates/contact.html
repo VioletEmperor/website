@@ -1,8 +1,8 @@
 {{ template "base.start" . }}
 <div class="contact-container">
-  <div class="contact-form-wrapper">
+  <div class="contact-form-wrapper" id="contact-form">
     <h1>Contact Me</h1>
-    <form hx-post="/contact" class="contact-form">
+    <form hx-swap="innerHTML" hx-target="#contact-form" hx-post="/contact" hx-disabled-elt="find button[type='submit']" hx-indicator="#loading-overlay" class="contact-form">
       <div class="form-group">
         <label for="name">Name</label>
         <input type="text" id="name" name="name" placeholder="John Doe" required>
@@ -29,6 +29,13 @@
         <button type="submit" class="btn btn-primary">Send Message</button>
       </div>
     </form>
+    
+    <div id="loading-overlay" class="loading-overlay htmx-indicator">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        <span>Sending message...</span>
+      </div>
+    </div>
   </div>
 </div>
 {{ template "base.end" . }}

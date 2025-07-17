@@ -95,6 +95,7 @@
 .btn-primary {
   background-color: var(--secondary);
   color: var(--text);
+  transition: all 0.3s ease;
 }
 
 .btn-primary:hover {
@@ -102,15 +103,79 @@
   color: var(--primary);
 }
 
+button[type="submit"]:disabled {
+  opacity: 0.25;
+}
+
 .btn-secondary {
   background-color: transparent;
   color: var(--text);
   border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
 }
 
 .btn-secondary:hover {
   background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 15, 15, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.loading-overlay.htmx-indicator.htmx-request {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  color: var(--text);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid var(--secondary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-spinner span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.contact-form-wrapper {
+  position: relative;
 }
 
 @media (max-width: 768px) {

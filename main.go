@@ -72,6 +72,7 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 	router.HandleFunc("GET /about", env.AboutHandler)
 	router.HandleFunc("GET /blog/posts", env.PostsHandler)
 	router.HandleFunc("GET /contact", env.ContactHandler)
+	router.HandleFunc("POST /contact", env.MessageHandler)
 
 	router.Handle("GET /static/", http.StripPrefix("/static/", fs))
 

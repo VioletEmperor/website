@@ -10,21 +10,40 @@
   font-size: 2rem;
 }
 
-.experience > div {
+.job-entry {
   padding: 25px;
   margin-bottom: 20px;
   border-left: 2px solid var(--secondary);
 }
 
-.experience > div h2 {
-  color: var(--secondary);
-  font-size: 1.5rem;
+.job-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
 }
 
-.experience > div > p {
+.job-logo {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.job-info {
+  flex: 1;
+}
+
+.job-info h2 {
+  color: var(--secondary);
+  font-size: 1.5rem;
+  margin: 0 0 5px 0;
+}
+
+.job-info p {
   color: var(--tertiary);
   font-weight: 500;
-  margin-bottom: 15px;
+  margin: 0;
   font-style: italic;
 }
 
@@ -46,4 +65,23 @@
   position: absolute;
   left: 0;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .job-header {
+    gap: 12px;
+  }
+  
+  .job-logo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .job-info h2 {
+    font-size: 1.3rem;
+  }
+  
+  .job-entry {
+    padding: 20px;
+  }
 }
