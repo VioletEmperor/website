@@ -5,6 +5,8 @@ import (
 	"github.com/resend/resend-go/v2"
 	"log"
 	"net/http"
+	"net/mail"
+	"strings"
 	"website/internal/posts"
 )
 
@@ -71,6 +73,22 @@ func (env Env) ContactHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (env Env) AdminHandler(w http.ResponseWriter, r *http.Request) {
+	type Data struct {
+		Active string
+	}
+
+	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
+
+	err := env.Templates["admin.html"].ExecuteTemplate(w, "admin.html", Data{"admin"})
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("failed to execute template:", err)
+		return
+	}
+}
+
 func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 	type Form struct {
 		Name    string
@@ -83,10 +101,24 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	message := Form{}
 
-	message.Name = r.FormValue("name")
-	message.Email = r.FormValue("email")
-	message.Subject = r.FormValue("subject")
-	message.Message = r.FormValue("message")
+	message.Name = strings.TrimSpace(r.FormValue("name"))
+	message.Email = strings.TrimSpace(r.FormValue("email"))
+	message.Subject = strings.TrimSpace(r.FormValue("subject"))
+	message.Message = strings.TrimSpace(r.FormValue("message"))
+
+	// Validate required fields
+	if message.Name == "" || message.Email == "" || message.Subject == "" || message.Message == "" {
+		log.Println("missing required form fields")
+		http.Error(w, "All fields are required", http.StatusBadRequest)
+		return
+	}
+
+	// Validate email format
+	if _, err := mail.ParseAddress(message.Email); err != nil {
+		log.Println("invalid email format:", message.Email)
+		http.Error(w, "Invalid email format", http.StatusBadRequest)
+		return
+	}
 
 	client := resend.NewClient(env.EmailKey)
 
@@ -108,8 +140,21 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 	sent, err := client.Emails.Send(params)
 
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		// Check for specific error types
+		errorMsg := err.Error()
+		if strings.Contains(errorMsg, "authentication") || strings.Contains(errorMsg, "unauthorized") {
+			log.Println("email service authentication failed:", err)
+			http.Error(w, "Email service temporarily unavailable", http.StatusServiceUnavailable)
+			return
+		}
+		if strings.Contains(errorMsg, "rate limit") || strings.Contains(errorMsg, "quota") {
+			log.Println("email service rate limited:", err)
+			http.Error(w, "Too many requests, please try again later", http.StatusTooManyRequests)
+			return
+		}
+		// Generic error
 		log.Println("failed to send email:", err)
+		http.Error(w, "Failed to send email", http.StatusInternalServerError)
 		return
 	}
 
