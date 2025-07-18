@@ -32,3 +32,9 @@ variable "database_password" {
   type        = string
   sensitive   = true
 }
+
+variable "email_key" {
+  description = "The email service API key"
+  type        = string
+  sensitive   = true
+}

@@ -73,9 +73,22 @@ resource "google_cloud_run_v2_service" "default" {
           }
         }
       }
+
+      env {
+        name = "EMAIL_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.email_key.secret_id
+            version = "latest"
+          }
+        }
+      }
     }
     service_account = google_service_account.service_account.email
   }
 
-  depends_on = [google_secret_manager_secret_version.database_host_version]
+  depends_on = [
+    google_secret_manager_secret_version.database_host_version,
+    google_secret_manager_secret_version.email_key_version
+  ]
 }

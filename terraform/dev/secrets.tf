@@ -81,3 +81,24 @@ resource "google_secret_manager_secret_iam_member" "database_name_policy" {
   member     = "serviceAccount:${google_service_account.service_account.email}"
   depends_on = [google_secret_manager_secret.database_name]
 }
+
+# EMAIL_KEY
+resource "google_secret_manager_secret" "email_key" {
+  secret_id = "email-key"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "email_key_version" {
+  secret      = google_secret_manager_secret.email_key.id
+  secret_data = var.email_key
+}
+
+resource "google_secret_manager_secret_iam_member" "email_key_policy" {
+  secret_id  = google_secret_manager_secret.email_key.id
+  role       = "roles/secretmanager.secretAccessor"
+  member     = "serviceAccount:${google_service_account.service_account.email}"
+  depends_on = [google_secret_manager_secret.email_key]
+}

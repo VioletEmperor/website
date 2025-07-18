@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"github.com/resend/resend-go/v2"
 	"log"
 	"net/http"
 	"website/internal/posts"
@@ -86,34 +88,32 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 	message.Subject = r.FormValue("subject")
 	message.Message = r.FormValue("message")
 
-	//apiKey := "re_P3QqiWE3_KgDshnx3fADzeRg2hhyHsw1t"
-	//
-	//client := resend.NewClient(apiKey)
-	//
-	//params := &resend.SendEmailRequest{
-	//  From:        "contact@adamshkolnik.com",
-	//  To:          []string{message.Email},
-	//  Subject:     fmt.Sprintf("Message From %s Has Been Received Successfully!", message.Name),
-	//  Bcc:         nil,
-	//  Cc:          []string{"adam.shkolnik@outlook.com"},
-	//  ReplyTo:     "",
-	//  Html:        fmt.Sprintf("<html><body><strong>%s</strong>\n<p>%s</p></body></html>", message.Subject, message.Message),
-	//  Text:        "",
-	//  Tags:        nil,
-	//  Attachments: nil,
-	//  Headers:     nil,
-	//  ScheduledAt: "",
-	//}
-	//
-	//sent, err := client.Emails.Send(params)
-	//
-	//if err != nil {
-	//  w.WriteHeader(http.StatusInternalServerError)
-	//  log.Println("failed to send email:", err)
-	//  return
-	//}
-	//
-	//log.Printf("sent: %s", sent.Id)
+	client := resend.NewClient(env.EmailKey)
+
+	params := &resend.SendEmailRequest{
+		From:        "contact@adamshkolnik.com",
+		To:          []string{message.Email},
+		Subject:     fmt.Sprintf("Message From %s Has Been Received Successfully!", message.Name),
+		Bcc:         nil,
+		Cc:          []string{"adam.shkolnik@outlook.com"},
+		ReplyTo:     "",
+		Html:        fmt.Sprintf("<html><body><strong>%s</strong>\n<p>%s</p></body></html>", message.Subject, message.Message),
+		Text:        "",
+		Tags:        nil,
+		Attachments: nil,
+		Headers:     nil,
+		ScheduledAt: "",
+	}
+
+	sent, err := client.Emails.Send(params)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("failed to send email:", err)
+		return
+	}
+
+	log.Println("sent: ", sent.Id)
 
 	if err := env.Templates["submit.html"].ExecuteTemplate(w, "submit.html", message); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

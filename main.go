@@ -55,7 +55,7 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 
 	repo := posts.New(pool)
 
-	env := handlers.Env{PostsRepository: repo, Templates: templates}
+	env := handlers.Env{PostsRepository: repo, Templates: templates, EmailKey: conf.EmailKey}
 
 	router := http.NewServeMux()
 

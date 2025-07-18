@@ -8,8 +8,9 @@ import (
 )
 
 type Config struct {
-	Port string
-	URL  string
+	Port     string
+	URL      string
+	EmailKey string
 }
 
 func GetConfig() (Config, error) {
@@ -46,6 +47,12 @@ func GetConfig() (Config, error) {
 	}
 
 	config.URL = fmt.Sprintf("user=%s password=%s database=%s host=%s", user, password, name, host)
+
+	config.EmailKey = os.Getenv("EMAIL_KEY")
+
+	if config.EmailKey == "" {
+		return config, errors.New("missing environment variable EMAIL_KEY")
+	}
 
 	log.Println(config.URL)
 

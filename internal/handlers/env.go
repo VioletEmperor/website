@@ -8,4 +8,5 @@ import (
 type Env struct {
 	PostsRepository posts.Repository
 	Templates       map[string]*template.Template
+	EmailKey        string
 }
