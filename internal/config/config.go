@@ -8,9 +8,11 @@ import (
 )
 
 type Config struct {
-	Port     string
-	URL      string
-	EmailKey string
+	Port              string
+	URL               string
+	EmailKey          string
+	ProjectID         string
+	FirebaseWebAPIKey string
 }
 
 func GetConfig() (Config, error) {
@@ -53,6 +55,19 @@ func GetConfig() (Config, error) {
 	if config.EmailKey == "" {
 		return config, errors.New("missing environment variable EMAIL_KEY")
 	}
+
+	config.ProjectID = os.Getenv("PROJECT_ID")
+
+	if config.ProjectID == "" {
+		return config, errors.New("missing environment variable PROJECT_ID")
+	}
+
+	config.FirebaseWebAPIKey = os.Getenv("FIREBASE_WEB_API_KEY")
+
+	if config.FirebaseWebAPIKey == "" {
+		return config, errors.New("missing environment variable FIREBASE_WEB_API_KEY")
+	}
+
 
 	log.Println(config.URL)
 

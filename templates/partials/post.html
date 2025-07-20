@@ -1,7 +1,24 @@
 {{ define "post" }}
-<div>
-  <h3>{{ .Title }}</h3>
-  <p>{{ .Author }}</p>
-  <p>{{ .Created }}</p>
-</div>
+<article class="post-card">
+  <div class="post-header">
+    <h2 class="post-title">{{ .Title }}</h2>
+    <div class="post-meta">
+      <span class="post-author">By {{ .Author }}</span>
+      <span class="post-date">{{ .Created.Format "January 2, 2006" }}</span>
+      {{ if ne .Created .Edited }}
+      <span class="post-edited">Edited {{ .Edited.Format "January 2, 2006" }}</span>
+      {{ end }}
+    </div>
+  </div>
+  
+  {{ if .Desc }}
+  <div class="post-description">
+    <p>{{ .Desc }}</p>
+  </div>
+  {{ end }}
+  
+  <div class="post-footer">
+    <a href="/blog/post/{{ .ID }}" class="read-more-btn">Read Full Post →</a>
+  </div>
+</article>
 {{ end }}

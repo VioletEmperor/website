@@ -14,6 +14,8 @@ import (
 	"website/internal/middleware"
 	"website/internal/parse"
 	"website/internal/posts"
+
+	firebase "firebase.google.com/go/v4"
 )
 
 func main() {
@@ -55,7 +57,28 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 
 	repo := posts.New(pool)
 
-	env := handlers.Env{PostsRepository: repo, Templates: templates, EmailKey: conf.EmailKey}
+	// Initialize Firebase Auth
+	firebaseConf := &firebase.Config{
+		ProjectID: conf.ProjectID,
+	}
+
+	app, err := firebase.NewApp(ctx, firebaseConf)
+	if err != nil {
+		return err
+	}
+
+	authClient, err := app.Auth(ctx)
+	if err != nil {
+		return err
+	}
+
+	env := handlers.Env{
+		PostsRepository: repo,
+		Templates:       templates,
+		EmailKey:        conf.EmailKey,
+		FirebaseAuth:    authClient,
+		Config:          conf,
+	}
 
 	router := http.NewServeMux()
 
@@ -71,9 +94,16 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 	router.HandleFunc("GET /", env.RootHandler)
 	router.HandleFunc("GET /about", env.AboutHandler)
 	router.HandleFunc("GET /blog/posts", env.PostsHandler)
+	router.HandleFunc("GET /blog/post/{id}", env.PostHandler)
 	router.HandleFunc("GET /contact", env.ContactHandler)
-	router.HandleFunc("GET /admin", env.AdminHandler)
 	router.HandleFunc("POST /contact", env.MessageHandler)
+
+	// Admin routes
+	router.HandleFunc("GET /admin", env.AdminHandler)
+	router.HandleFunc("GET /admin/login", env.AdminLoginPageHandler)
+	router.HandleFunc("POST /admin/logout", env.AdminLogoutHandler)
+	router.HandleFunc("GET /admin/dashboard", env.AdminDashboardHandler)
+	router.HandleFunc("POST /admin/verify", env.AdminVerifyHandler)
 
 	router.Handle("GET /static/", http.StripPrefix("/static/", fs))
 

@@ -19,11 +19,17 @@ services:
       - DB_USER=${DB_USER:?database user not set}
       - DB_PASSWORD=${DB_PASSWORD:?database password not set}
       - EMAIL_KEY=${EMAIL_KEY:?email key not set}
+      - PROJECT_ID=${PROJECT_ID:?project id not set}
+      - FIREBASE_WEB_API_KEY=${FIREBASE_WEB_API_KEY:?firebase web api key not set}
+      - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
       - PORT=8080
     networks:
       - mynet
     ports:
       - "80:8080"
+    volumes:
+      # Mount gcloud credentials for Firebase Auth
+      - ~/.config/gcloud:/root/.config/gcloud:ro
     deploy:
       restart_policy:
         condition: on-failure

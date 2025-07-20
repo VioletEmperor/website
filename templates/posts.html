@@ -1,7 +1,15 @@
 {{ template "base.start" . }}
+<link rel="stylesheet" href="/static/css/posts.css">
 <div class="main">
-  {{ range .Posts }}
-  {{ template "post" . }}
-  {{ end }}
+  <div class="posts-header">
+    <h1>Blog Posts</h1>
+    <p>Latest thoughts and updates from Adam Shkolnik</p>
+  </div>
+  
+  <div class="posts-container">
+    {{ range .Posts }}
+    {{ template "post" . }}
+    {{ end }}
+  </div>
 </div>
 {{ template "base.end" . }}

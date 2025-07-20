@@ -83,12 +83,30 @@ resource "google_cloud_run_v2_service" "default" {
           }
         }
       }
+
+      env {
+        name  = "PROJECT_ID"
+        value = var.project
+      }
+
+      env {
+        name = "FIREBASE_WEB_API_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.firebase_web_api_key.secret_id
+            version = "latest"
+          }
+        }
+      }
+
+
     }
     service_account = google_service_account.service_account.email
   }
 
   depends_on = [
     google_secret_manager_secret_version.database_host_version,
-    google_secret_manager_secret_version.email_key_version
+    google_secret_manager_secret_version.email_key_version,
+    google_secret_manager_secret_version.firebase_web_api_key_version
   ]
 }

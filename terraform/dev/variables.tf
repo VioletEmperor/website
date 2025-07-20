@@ -38,3 +38,10 @@ variable "email_key" {
   type        = string
   sensitive   = true
 }
+
+variable "firebase_web_api_key" {
+  description = "Firebase Web API key for client-side authentication"
+  type        = string
+  sensitive   = true
+}
+

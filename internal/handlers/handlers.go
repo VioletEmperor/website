@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"github.com/resend/resend-go/v2"
 	"log"
 	"net/http"
 	"net/mail"
+	"strconv"
 	"strings"
 	"website/internal/posts"
 )
@@ -30,6 +32,43 @@ func (env Env) PostsHandler(w http.ResponseWriter, r *http.Request) {
 
 	err = env.Templates["posts.html"].ExecuteTemplate(w, "posts.html", Data{list, "posts"})
 
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("failed to execute template:", err)
+		return
+	}
+}
+
+func (env Env) PostHandler(w http.ResponseWriter, r *http.Request) {
+	type Data struct {
+		Post   posts.Post
+		Active string
+	}
+
+	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
+
+	// Extract post ID from URL path
+	idStr := r.PathValue("id")
+	if idStr == "" {
+		http.Error(w, "Post ID is required", http.StatusBadRequest)
+		return
+	}
+
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	post, err := env.PostsRepository.GetPost(id)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		log.Printf("failed to fetch post %d: %v", id, err)
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+
+	err = env.Templates["post.html"].ExecuteTemplate(w, "post.html", Data{*post, "posts"})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("failed to execute template:", err)
@@ -74,19 +113,90 @@ func (env Env) ContactHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (env Env) AdminHandler(w http.ResponseWriter, r *http.Request) {
+	// Redirect to login page first - users need to authenticate before accessing dashboard
+	http.Redirect(w, r, "/admin/login", http.StatusFound)
+}
+
+func (env Env) AdminLoginPageHandler(w http.ResponseWriter, r *http.Request) {
 	type Data struct {
-		Active string
+		Active         string
+		FirebaseAPIKey string
+		ProjectID      string
+		Error          string
 	}
 
 	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
 
-	err := env.Templates["admin.html"].ExecuteTemplate(w, "admin.html", Data{"admin"})
+	data := Data{
+		Active:         "admin",
+		FirebaseAPIKey: env.Config.FirebaseWebAPIKey,
+		ProjectID:      env.Config.ProjectID,
+		Error:          r.URL.Query().Get("error"),
+	}
 
+	err := env.Templates["admin-login.html"].ExecuteTemplate(w, "admin-login.html", data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("failed to execute template:", err)
 		return
 	}
+}
+
+func (env Env) AdminLogoutHandler(w http.ResponseWriter, r *http.Request) {
+	// Client-side authentication handles logout
+	http.Redirect(w, r, "/admin/login", http.StatusFound)
+}
+
+func (env Env) AdminDashboardHandler(w http.ResponseWriter, r *http.Request) {
+	type Data struct {
+		Active         string
+		FirebaseAPIKey string
+		ProjectID      string
+	}
+
+	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
+
+	data := Data{
+		Active:         "admin",
+		FirebaseAPIKey: env.Config.FirebaseWebAPIKey,
+		ProjectID:      env.Config.ProjectID,
+	}
+
+	err := env.Templates["admin-dashboard.html"].ExecuteTemplate(w, "admin-dashboard.html", data)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		log.Println("failed to execute template:", err)
+		return
+	}
+}
+
+func (env Env) AdminVerifyHandler(w http.ResponseWriter, r *http.Request) {
+	// Extract token from Authorization header
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		http.Error(w, "No authorization header", http.StatusUnauthorized)
+		return
+	}
+
+	// Extract token from "Bearer <token>" format
+	parts := strings.Split(authHeader, " ")
+	if len(parts) != 2 || parts[0] != "Bearer" {
+		http.Error(w, "Invalid authorization header format", http.StatusUnauthorized)
+		return
+	}
+
+	idToken := parts[1]
+
+	// Verify the ID token with Firebase
+	_, err := env.FirebaseAuth.VerifyIDToken(context.Background(), idToken)
+	if err != nil {
+		log.Printf("firebase token verification failed: %v", err)
+		http.Error(w, "Invalid token", http.StatusUnauthorized)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	//w.Write([]byte("OK"))
 }
 
 func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
