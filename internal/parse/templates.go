@@ -33,5 +33,17 @@ func Parse() map[string]*template.Template {
 		"templates/partials/footer.html",
 		"templates/partials/header.html"))
 
+	templates["admin-login.html"] = template.Must(template.ParseFiles(
+		"templates/layout/base.html",
+		"templates/admin-login.html",
+		"templates/partials/footer.html",
+		"templates/partials/header.html"))
+
+	templates["admin-dashboard.html"] = template.Must(template.ParseFiles(
+		"templates/layout/base.html",
+		"templates/admin-dashboard.html",
+		"templates/partials/footer.html",
+		"templates/partials/header.html"))
+
 	return templates
 }

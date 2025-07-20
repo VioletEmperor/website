@@ -1,0 +1,123 @@
+{{ template "base.start" . }}
+<link rel="stylesheet" href="/static/css/admin-dashboard.css">
+<script type="module">
+  // Import Firebase v9+ modular SDK
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+  import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js';
+  
+  // Firebase configuration from server
+  const firebaseConfig = {
+    apiKey: "{{.FirebaseAPIKey}}",
+    authDomain: "{{.ProjectID}}.firebaseapp.com",
+    projectId: "{{.ProjectID}}"
+  };
+  
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  
+  // Make auth available globally for the admin dashboard script
+  window.firebaseAuth = auth;
+  window.firebaseApp = app;
+  window.onAuthStateChanged = onAuthStateChanged;
+  window.signOut = signOut;
+  
+  // Signal that Firebase is ready
+  window.firebaseReady = true;
+  window.dispatchEvent(new Event('firebaseReady'));
+</script>
+<div class="admin-dashboard">
+  <header class="admin-header">
+    <h1 class="admin-title">Admin Dashboard</h1>
+    <div class="admin-user-info">
+      <span class="admin-user-email" id="admin-email">Loading...</span>
+      <a href="#" class="btn-logout">Logout</a>
+    </div>
+  </header>
+
+  <div class="admin-container">
+    <nav class="admin-nav">
+      <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="posts">Manage Posts</button>
+        <button class="nav-tab" data-tab="upload">Upload New Post</button>
+      </div>
+    </nav>
+
+    <!-- Posts Management Tab -->
+    <div id="posts" class="tab-content active">
+      <div class="posts-section">
+        <div class="section-header">
+          <h2 class="section-title">Blog Posts</h2>
+          <button class="btn-primary" onclick="document.querySelector('[data-tab=upload]').click()">
+            Add New Post
+          </button>
+        </div>
+
+        <table class="posts-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sample Blog Post 1</td>
+              <td>2024-01-15</td>
+              <td>
+                <a href="#" class="btn-small btn-edit">Edit</a>
+                <a href="#" class="btn-small btn-delete" data-title="Sample Blog Post 1">Delete</a>
+              </td>
+            </tr>
+            <tr>
+              <td>Sample Blog Post 2</td>
+              <td>2024-01-10</td>
+              <td>
+                <a href="#" class="btn-small btn-edit">Edit</a>
+                <a href="#" class="btn-small btn-delete" data-title="Sample Blog Post 2">Delete</a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Upload New Post Tab -->
+    <div id="upload" class="tab-content">
+      <div class="upload-section">
+        <h2 class="section-title">Upload New Blog Post</h2>
+        
+        <form class="upload-form" action="/admin/posts/upload" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="post-title">Post Title</label>
+            <input type="text" id="post-title" name="title" class="form-control" placeholder="Enter post title" required>
+          </div>
+
+          <div class="form-group">
+            <label for="post-excerpt">Excerpt (Optional)</label>
+            <textarea id="post-excerpt" name="excerpt" class="form-control" rows="3" placeholder="Brief description of the post"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>HTML File</label>
+            <div id="file-upload" class="file-upload">
+              <div class="upload-icon">📄</div>
+              <p class="upload-text">
+                Click here or drag and drop your HTML file<br>
+                <small>Only .html files are accepted</small>
+              </p>
+              <input type="file" id="file-input" name="htmlFile" accept=".html" required>
+            </div>
+            <div id="file-info" class="file-info" style="display: none;"></div>
+          </div>
+
+          <button type="submit" class="btn-primary">Upload Post</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/admin-dashboard.js"></script>
+{{ template "base.end" . }}

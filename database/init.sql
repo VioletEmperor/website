@@ -8,9 +8,10 @@ CREATE TABLE public.posts (
     author varchar(80) default 'Adam Shkolnik',
     created timestamp default CURRENT_TIMESTAMP,
     edited timestamp default  CURRENT_TIMESTAMP,
-    body varchar(80)
+    body varchar(80),
+    desc varchar(1000)
 );
 
 INSERT INTO public.posts VALUES
-(DEFAULT, 'POST A', DEFAULT, DEFAULT, DEFAULT, 'a.html'),
-(DEFAULT, 'POST B', DEFAULT, DEFAULT, DEFAULT, 'a.html');
+(DEFAULT, 'POST A', DEFAULT, DEFAULT, DEFAULT, 'a.html', ''),
+(DEFAULT, 'POST B', DEFAULT, DEFAULT, DEFAULT, 'a.html', '');
