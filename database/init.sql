@@ -9,9 +9,9 @@ CREATE TABLE public.posts (
     created timestamp default CURRENT_TIMESTAMP,
     edited timestamp default  CURRENT_TIMESTAMP,
     body varchar(80),
-    desc varchar(1000)
+    description varchar(500)
 );
 
 INSERT INTO public.posts VALUES
-(DEFAULT, 'POST A', DEFAULT, DEFAULT, DEFAULT, 'a.html', ''),
-(DEFAULT, 'POST B', DEFAULT, DEFAULT, DEFAULT, 'a.html', '');
+(DEFAULT, 'POST A', DEFAULT, DEFAULT, DEFAULT, 'a.html', 'Short Description for Post A'),
+(DEFAULT, 'POST B', DEFAULT, DEFAULT, DEFAULT, 'b.html', 'Short Description for Post B');

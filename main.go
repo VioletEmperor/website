@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 	"website/internal/config"
+	"website/internal/content"
 	"website/internal/database"
 	"website/internal/handlers"
 	"website/internal/middleware"
@@ -57,6 +58,17 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 
 	repo := posts.New(pool)
 
+	// Initialize content service based on storage mode
+	var contentService content.ContentService
+	if conf.StorageMode == "local" {
+		contentService = content.NewFilesystemService(conf.PostsDirectory)
+		log.Printf("Using local filesystem content service with directory: %s", conf.PostsDirectory)
+	} else {
+		// TODO: Implement GCS service when needed
+		log.Printf("GCS storage mode not yet implemented, falling back to local filesystem")
+		contentService = content.NewFilesystemService(conf.PostsDirectory)
+	}
+
 	// Initialize Firebase Auth
 	firebaseConf := &firebase.Config{
 		ProjectID: conf.ProjectID,
@@ -74,6 +86,7 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 
 	env := handlers.Env{
 		PostsRepository: repo,
+		ContentService:  contentService,
 		Templates:       templates,
 		EmailKey:        conf.EmailKey,
 		FirebaseAuth:    authClient,

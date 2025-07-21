@@ -1,49 +1,31 @@
 package parse
 
-import "html/template"
+import (
+	"html/template"
+	"path/filepath"
+)
 
 func Parse() map[string]*template.Template {
-	templates := map[string]*template.Template{}
+	// Parse common files into base template
+	baseTemplate := template.Must(template.ParseGlob("templates/layout/*.html"))
+	baseTemplate = template.Must(baseTemplate.ParseGlob("templates/partials/*.html"))
 
-	templates["about.html"] = template.Must(template.ParseFiles(
-		"templates/layout/base.html",
-		"templates/about.html",
-		"templates/partials/footer.html",
-		"templates/partials/header.html"))
+	templates := make(map[string]*template.Template)
+	
+	// Get all page template files
+	pageFiles, err := filepath.Glob("templates/*.html")
+	if err != nil {
+		panic(err)
+	}
 
-	templates["posts.html"] = template.Must(template.ParseFiles(
-		"templates/layout/base.html",
-		"templates/posts.html",
-		"templates/partials/footer.html",
-		"templates/partials/header.html",
-		"templates/partials/post.html"))
-
-	templates["contact.html"] = template.Must(template.ParseFiles(
-		"templates/layout/base.html",
-		"templates/contact.html",
-		"templates/partials/footer.html",
-		"templates/partials/header.html"))
-
-	templates["submit.html"] = template.Must(template.ParseFiles(
-		"templates/partials/submit.html"))
-
-	templates["admin.html"] = template.Must(template.ParseFiles(
-		"templates/layout/base.html",
-		"templates/admin.html",
-		"templates/partials/footer.html",
-		"templates/partials/header.html"))
-
-	templates["admin-login.html"] = template.Must(template.ParseFiles(
-		"templates/layout/base.html",
-		"templates/admin-login.html",
-		"templates/partials/footer.html",
-		"templates/partials/header.html"))
-
-	templates["admin-dashboard.html"] = template.Must(template.ParseFiles(
-		"templates/layout/base.html",
-		"templates/admin-dashboard.html",
-		"templates/partials/footer.html",
-		"templates/partials/header.html"))
+	// Parse each page template with base files
+	for _, file := range pageFiles {
+		name := filepath.Base(file)
+		// Clone base template (includes all common files)
+		tmpl := template.Must(baseTemplate.Clone())
+		// Add the specific page template to the clone
+		templates[name] = template.Must(tmpl.ParseFiles(file))
+	}
 
 	return templates
 }

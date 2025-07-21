@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/resend/resend-go/v2"
+	"html/template"
 	"log"
 	"net/http"
 	"net/mail"
@@ -41,8 +42,9 @@ func (env Env) PostsHandler(w http.ResponseWriter, r *http.Request) {
 
 func (env Env) PostHandler(w http.ResponseWriter, r *http.Request) {
 	type Data struct {
-		Post   posts.Post
-		Active string
+		Post    posts.Post
+		Content template.HTML
+		Active  string
 	}
 
 	w.Header().Set("Content-Type", "text/html; text/css; application/javascript; charset=utf-8")
@@ -62,13 +64,26 @@ func (env Env) PostHandler(w http.ResponseWriter, r *http.Request) {
 
 	post, err := env.PostsRepository.GetPost(id)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
 		log.Printf("failed to fetch post %d: %v", id, err)
 		http.Error(w, "Post not found", http.StatusNotFound)
 		return
 	}
 
-	err = env.Templates["post.html"].ExecuteTemplate(w, "post.html", Data{*post, "posts"})
+	// Load HTML content for the post
+	htmlContent, err := env.ContentService.GetContent(post.Body)
+	if err != nil {
+		log.Printf("failed to load content for post %d (file: %s): %v", id, post.Body, err)
+		http.Error(w, "Post content not available", http.StatusNotFound)
+		return
+	}
+
+	data := Data{
+		Post:    *post,
+		Content: template.HTML(htmlContent),
+		Active:  "posts",
+	}
+
+	err = env.Templates["post.html"].ExecuteTemplate(w, "post.html", data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("failed to execute template:", err)

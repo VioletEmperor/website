@@ -13,6 +13,8 @@ type Config struct {
 	EmailKey          string
 	ProjectID         string
 	FirebaseWebAPIKey string
+	PostsDirectory    string
+	StorageMode       string // "local" or "gcs"
 }
 
 func GetConfig() (Config, error) {
@@ -68,6 +70,16 @@ func GetConfig() (Config, error) {
 		return config, errors.New("missing environment variable FIREBASE_WEB_API_KEY")
 	}
 
+	// Content storage configuration
+	config.PostsDirectory = os.Getenv("POSTS_DIRECTORY")
+	if config.PostsDirectory == "" {
+		config.PostsDirectory = "posts" // Default to posts/ directory
+	}
+
+	config.StorageMode = os.Getenv("STORAGE_MODE")
+	if config.StorageMode == "" {
+		config.StorageMode = "local" // Default to local filesystem
+	}
 
 	log.Println(config.URL)
 

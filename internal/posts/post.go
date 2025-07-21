@@ -9,4 +9,5 @@ type Post struct {
 	Created time.Time `db:"created"`
 	Edited  time.Time `db:"edited"`
 	Body    string    `db:"body"`
+	Description string `db:"description"`
 }
