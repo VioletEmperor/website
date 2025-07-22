@@ -16,6 +16,7 @@ import (
 	"website/internal/parse"
 	"website/internal/posts"
 
+	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go/v4"
 )
 
@@ -63,9 +64,21 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 	if conf.StorageMode == "local" {
 		contentService = content.NewFilesystemService(conf.PostsDirectory)
 		log.Printf("Using local filesystem content service with directory: %s", conf.PostsDirectory)
+	} else if conf.StorageMode == "gcs" {
+		if conf.GCSBucketName == "" {
+			log.Fatal("GCS_BUCKET_NAME is required when using GCS storage mode")
+		}
+		
+		// Create GCS client
+		gcsClient, err := storage.NewClient(ctx)
+		if err != nil {
+			return err
+		}
+		
+		contentService = content.NewGCSService(gcsClient, conf.GCSBucketName, conf.GCSPrefix)
+		log.Printf("Using GCS content service with bucket: %s, prefix: %s", conf.GCSBucketName, conf.GCSPrefix)
 	} else {
-		// TODO: Implement GCS service when needed
-		log.Printf("GCS storage mode not yet implemented, falling back to local filesystem")
+		log.Printf("Unknown storage mode '%s', falling back to local filesystem", conf.StorageMode)
 		contentService = content.NewFilesystemService(conf.PostsDirectory)
 	}
 
@@ -93,32 +106,43 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 		Config:          conf,
 	}
 
-	router := http.NewServeMux()
+	// Create separate routers
+	publicRouter := http.NewServeMux()
+	adminRouter := http.NewServeMux()
 
-	mid := middleware.Stack(middleware.EnableCors, middleware.Logger)
+	// Middleware stacks
+	publicMid := middleware.Stack(middleware.EnableCors, middleware.Logger)
+	adminMid := middleware.Stack(middleware.EnableCors, middleware.Logger, middleware.Auth(authClient))
 
+	// Create main router that delegates to sub-routers
+	mainRouter := http.NewServeMux()
+	
 	server := &http.Server{
 		Addr:    ":" + conf.Port,
-		Handler: mid(router),
+		Handler: mainRouter,
 	}
 
 	fs := http.FileServer(http.Dir("static"))
 
-	router.HandleFunc("GET /", env.RootHandler)
-	router.HandleFunc("GET /about", env.AboutHandler)
-	router.HandleFunc("GET /blog/posts", env.PostsHandler)
-	router.HandleFunc("GET /blog/post/{id}", env.PostHandler)
-	router.HandleFunc("GET /contact", env.ContactHandler)
-	router.HandleFunc("POST /contact", env.MessageHandler)
+	// Admin routes - relative paths since mounted under /admin/
+	adminRouter.HandleFunc("GET /", env.AdminHandler)  
+	adminRouter.HandleFunc("GET /login", env.AdminLoginPageHandler)
+	adminRouter.HandleFunc("POST /logout", env.AdminLogoutHandler)
+	adminRouter.HandleFunc("GET /dashboard", env.AdminDashboardHandler)
+	adminRouter.HandleFunc("POST /verify", env.AdminVerifyHandler)
 
-	// Admin routes
-	router.HandleFunc("GET /admin", env.AdminHandler)
-	router.HandleFunc("GET /admin/login", env.AdminLoginPageHandler)
-	router.HandleFunc("POST /admin/logout", env.AdminLogoutHandler)
-	router.HandleFunc("GET /admin/dashboard", env.AdminDashboardHandler)
-	router.HandleFunc("POST /admin/verify", env.AdminVerifyHandler)
+	// Public routes - use specific patterns to avoid conflicts
+	publicRouter.HandleFunc("GET /{$}", env.RootHandler)
+	publicRouter.HandleFunc("GET /about", env.AboutHandler)
+	publicRouter.HandleFunc("GET /blog/posts", env.PostsHandler)
+	publicRouter.HandleFunc("GET /blog/post/{id}", env.PostHandler)
+	publicRouter.HandleFunc("GET /contact", env.ContactHandler)
+	publicRouter.HandleFunc("POST /contact", env.MessageHandler)
 
-	router.Handle("GET /static/", http.StripPrefix("/static/", fs))
+	// Mount routers with their middleware - strip prefix for admin routes
+	mainRouter.Handle("/admin/", http.StripPrefix("/admin", adminMid(adminRouter)))
+	mainRouter.Handle("/static/", http.StripPrefix("/static/", fs))
+	mainRouter.Handle("/", publicMid(publicRouter))
 
 	if err := server.ListenAndServe(); err != nil {
 		return err

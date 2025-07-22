@@ -24,6 +24,19 @@ Before running, ensure these environment variables are set:
 - `DB_NAME` - Database name
 - `PORT` - Server port (defaults to 8080 in Docker)
 
+### Content Storage Configuration
+The application supports two storage modes for blog post content:
+
+**Local Filesystem (Default)**:
+- `STORAGE_MODE=local` (or unset)
+- `POSTS_DIRECTORY=posts` (directory containing HTML files)
+
+**Google Cloud Storage**:
+- `STORAGE_MODE=gcs`
+- `GCS_BUCKET_NAME=your-bucket-name` (required for GCS mode)
+- `GCS_PREFIX=posts/` (optional prefix for post files)
+- Requires `GOOGLE_APPLICATION_CREDENTIALS` environment variable or default GCP credentials
+
 ### Database Operations
 ```bash
 # Reset database schema (via Docker)

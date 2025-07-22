@@ -214,7 +214,8 @@ async function signOutUser() {
   try {
     await signOut(auth);
     localStorage.removeItem('adminToken');
-    sessionStorage.removeItem('adminToken');
+    // Clear cookie
+    document.cookie = 'adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     window.location.href = '/admin/login';
   } catch (error) {
     console.error('Sign out error:', error);

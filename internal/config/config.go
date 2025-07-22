@@ -15,6 +15,8 @@ type Config struct {
 	FirebaseWebAPIKey string
 	PostsDirectory    string
 	StorageMode       string // "local" or "gcs"
+	GCSBucketName     string
+	GCSPrefix         string
 }
 
 func GetConfig() (Config, error) {
@@ -80,6 +82,10 @@ func GetConfig() (Config, error) {
 	if config.StorageMode == "" {
 		config.StorageMode = "local" // Default to local filesystem
 	}
+
+	// GCS configuration (only required if using GCS storage mode)
+	config.GCSBucketName = os.Getenv("GCS_BUCKET_NAME")
+	config.GCSPrefix = os.Getenv("GCS_PREFIX") // Optional prefix, e.g., "posts/"
 
 	log.Println(config.URL)
 

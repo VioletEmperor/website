@@ -176,7 +176,8 @@ async function signOut() {
     await window.signOut(auth);
     // Clear any stored tokens
     localStorage.removeItem('adminToken');
-    sessionStorage.removeItem('adminToken');
+    // Clear cookie
+    document.cookie = 'adminToken=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
   } catch (error) {
     console.error('Sign out error:', error);
   }
@@ -186,6 +187,8 @@ function redirectToDashboard() {
   // Store auth token for API calls
   currentUser.getIdToken().then(token => {
     localStorage.setItem('adminToken', token);
+    // Set cookie for server-side middleware
+    document.cookie = `adminToken=${token}; path=/; secure; samesite=strict`;
     window.location.href = '/admin/dashboard';
   });
 }
