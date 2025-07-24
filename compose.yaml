@@ -31,7 +31,7 @@ services:
       # Mount gcloud credentials for Firebase Auth
       - ~/.config/gcloud:/root/.config/gcloud:ro
       # Mount posts directory for blog content
-      - ./posts:/app/posts:ro
+      - ./posts:/app/posts:rw
     deploy:
       restart_policy:
         condition: on-failure

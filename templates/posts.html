@@ -4,12 +4,98 @@
   <div class="posts-header">
     <h1>Blog Posts</h1>
     <p>Latest thoughts and updates from Adam Shkolnik</p>
+    {{ if .Pagination.TotalPosts }}
+    <p class="posts-info">
+      {{ if gt .Pagination.TotalPages 1 }}
+        Page {{ .Pagination.CurrentPage }} of {{ .Pagination.TotalPages }} • 
+      {{ end }}
+    </p>
+    {{ end }}
   </div>
   
   <div class="posts-container">
     {{ range .Posts }}
     {{ template "post" . }}
+    {{ else }}
+    <div class="no-posts">
+      <h3>No posts found</h3>
+      <p>Check back later for new content!</p>
+    </div>
     {{ end }}
   </div>
+
+  {{ if gt .Pagination.TotalPages 1 }}
+  <div class="pagination">
+    {{ if .Pagination.HasPrev }}
+    <a href="/blog/posts?page={{ .Pagination.PrevPage }}" class="pagination-btn pagination-prev">
+      ← Previous
+    </a>
+    {{ else }}
+    <span class="pagination-btn pagination-prev disabled">← Previous</span>
+    {{ end }}
+
+    <div class="pagination-pages">
+      {{ $currentPage := .Pagination.CurrentPage }}
+      {{ $totalPages := .Pagination.TotalPages }}
+      
+      {{ if le $totalPages 7 }}
+        <!-- Show all pages if 7 or fewer -->
+        {{ range $page := seq 1 $totalPages }}
+          {{ if eq $page $currentPage }}
+          <span class="pagination-page active">{{ $page }}</span>
+          {{ else }}
+          <a href="/blog/posts?page={{ $page }}" class="pagination-page">{{ $page }}</a>
+          {{ end }}
+        {{ end }}
+      {{ else }}
+        <!-- Show ellipsis for many pages -->
+        {{ if le $currentPage 4 }}
+          <!-- Near beginning -->
+          {{ range $page := seq 1 5 }}
+            {{ if eq $page $currentPage }}
+            <span class="pagination-page active">{{ $page }}</span>
+            {{ else }}
+            <a href="/blog/posts?page={{ $page }}" class="pagination-page">{{ $page }}</a>
+            {{ end }}
+          {{ end }}
+          <span class="pagination-ellipsis">…</span>
+          <a href="/blog/posts?page={{ $totalPages }}" class="pagination-page">{{ $totalPages }}</a>
+        {{ else if ge $currentPage (sub $totalPages 3) }}
+          <!-- Near end -->
+          <a href="/blog/posts?page=1" class="pagination-page">1</a>
+          <span class="pagination-ellipsis">…</span>
+          {{ range $page := seq (sub $totalPages 4) $totalPages }}
+            {{ if eq $page $currentPage }}
+            <span class="pagination-page active">{{ $page }}</span>
+            {{ else }}
+            <a href="/blog/posts?page={{ $page }}" class="pagination-page">{{ $page }}</a>
+            {{ end }}
+          {{ end }}
+        {{ else }}
+          <!-- In middle -->
+          <a href="/blog/posts?page=1" class="pagination-page">1</a>
+          <span class="pagination-ellipsis">…</span>
+          {{ range $page := seq (sub $currentPage 1) (add $currentPage 1) }}
+            {{ if eq $page $currentPage }}
+            <span class="pagination-page active">{{ $page }}</span>
+            {{ else }}
+            <a href="/blog/posts?page={{ $page }}" class="pagination-page">{{ $page }}</a>
+            {{ end }}
+          {{ end }}
+          <span class="pagination-ellipsis">…</span>
+          <a href="/blog/posts?page={{ $totalPages }}" class="pagination-page">{{ $totalPages }}</a>
+        {{ end }}
+      {{ end }}
+    </div>
+
+    {{ if .Pagination.HasNext }}
+    <a href="/blog/posts?page={{ .Pagination.NextPage }}" class="pagination-btn pagination-next">
+      Next →
+    </a>
+    {{ else }}
+    <span class="pagination-btn pagination-next disabled">Next →</span>
+    {{ end }}
+  </div>
+  {{ end }}
 </div>
 {{ template "base.end" . }}

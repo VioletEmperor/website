@@ -50,3 +50,37 @@ func (fs *FilesystemService) GetContent(filename string) (string, error) {
 	
 	return string(content), nil
 }
+
+// SaveContent saves HTML content to the local filesystem
+func (fs *FilesystemService) SaveContent(filename, content string) error {
+	// Construct the full file path
+	filePath := filepath.Join(fs.postsDirectory, filename)
+	
+	// Security check: ensure the file is within the posts directory
+	absPostsDir, err := filepath.Abs(fs.postsDirectory)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path for posts directory: %w", err)
+	}
+	
+	absFilePath, err := filepath.Abs(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to get absolute path for file: %w", err)
+	}
+	
+	// Check if the file is within the posts directory (prevent directory traversal)
+	if !filepath.HasPrefix(absFilePath, absPostsDir) {
+		return fmt.Errorf("file path outside posts directory: %s", filename)
+	}
+	
+	// Ensure the posts directory exists
+	if err := os.MkdirAll(fs.postsDirectory, 0755); err != nil {
+		return fmt.Errorf("failed to create posts directory: %w", err)
+	}
+	
+	// Write the content to the file
+	if err := os.WriteFile(filePath, []byte(content), 0644); err != nil {
+		return fmt.Errorf("failed to write post content: %w", err)
+	}
+	
+	return nil
+}

@@ -40,6 +40,7 @@
       <div class="nav-tabs">
         <button class="nav-tab active" data-tab="posts">Manage Posts</button>
         <button class="nav-tab" data-tab="upload">Upload New Post</button>
+        <button class="nav-tab" data-tab="edit" style="display: none;">Edit Post</button>
       </div>
     </nav>
 
@@ -62,22 +63,24 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>Sample Blog Post 1</td>
-              <td>2024-01-15</td>
-              <td>
-                <a href="#" class="btn-small btn-edit">Edit</a>
-                <a href="#" class="btn-small btn-delete" data-title="Sample Blog Post 1">Delete</a>
-              </td>
-            </tr>
-            <tr>
-              <td>Sample Blog Post 2</td>
-              <td>2024-01-10</td>
-              <td>
-                <a href="#" class="btn-small btn-edit">Edit</a>
-                <a href="#" class="btn-small btn-delete" data-title="Sample Blog Post 2">Delete</a>
-              </td>
-            </tr>
+            {{if .Posts}}
+              {{range .Posts}}
+              <tr>
+                <td>{{.Title}}</td>
+                <td>{{.Created.Format "2006-01-02"}}</td>
+                <td>
+                  <a href="#" class="btn-small btn-edit" data-id="{{.ID}}" data-title="{{.Title}}">Edit</a>
+                  <a href="#" class="btn-small btn-delete" data-id="{{.ID}}" data-title="{{.Title}}">Delete</a>
+                </td>
+              </tr>
+              {{end}}
+            {{else}}
+              <tr>
+                <td colspan="3" style="text-align: center; padding: 20px; color: #666;">
+                  No posts found. <a href="#" onclick="document.querySelector('[data-tab=upload]').click()">Create your first post</a>
+                </td>
+              </tr>
+            {{end}}
           </tbody>
         </table>
       </div>
@@ -113,6 +116,43 @@
           </div>
 
           <button type="submit" class="btn-primary">Upload Post</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Edit Post Tab -->
+    <div id="edit" class="tab-content">
+      <div class="upload-section">
+        <h2 class="section-title">Edit Post: <span id="edit-post-title">Loading...</span></h2>
+        
+        <form class="upload-form">
+          <div class="form-group">
+            <label for="edit-title">Post Title</label>
+            <input type="text" id="edit-title" name="title" class="form-control" placeholder="Enter post title" required>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-excerpt">Excerpt (Optional)</label>
+            <textarea id="edit-excerpt" name="excerpt" class="form-control" rows="3" placeholder="Brief description of the post"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>HTML File (optional - leave empty to keep existing)</label>
+            <div id="edit-file-upload" class="file-upload">
+              <div class="upload-icon">📄</div>
+              <p class="upload-text">
+                Click here or drag and drop to replace HTML file<br>
+                <small>Only .html files are accepted</small>
+              </p>
+              <input type="file" id="edit-file-input" name="htmlFile" accept=".html">
+            </div>
+            <div id="edit-file-info" class="file-info" style="display: none;"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn-primary" id="cancel-edit">Cancel</button>
+            <button type="submit" class="btn-primary">Update Post</button>
+          </div>
         </form>
       </div>
     </div>

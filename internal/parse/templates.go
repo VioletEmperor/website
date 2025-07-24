@@ -6,8 +6,25 @@ import (
 )
 
 func Parse() map[string]*template.Template {
+	// Create function map for templates
+	funcMap := template.FuncMap{
+		"seq": func(start, end int) []int {
+			result := make([]int, end-start+1)
+			for i := range result {
+				result[i] = start + i
+			}
+			return result
+		},
+		"add": func(a, b int) int {
+			return a + b
+		},
+		"sub": func(a, b int) int {
+			return a - b
+		},
+	}
+	
 	// Parse common files into base template
-	baseTemplate := template.Must(template.ParseGlob("templates/layout/*.html"))
+	baseTemplate := template.Must(template.New("").Funcs(funcMap).ParseGlob("templates/layout/*.html"))
 	baseTemplate = template.Must(baseTemplate.ParseGlob("templates/partials/*.html"))
 
 	templates := make(map[string]*template.Template)

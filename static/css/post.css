@@ -3,7 +3,7 @@
 .post-container {
   max-width: 900px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 100px 20px 20px 20px;
 }
 
 .post-header {
@@ -71,7 +71,7 @@
 
 @media (max-width: 768px) {
   .post-container {
-    padding: 10px;
+    padding: 90px 10px 10px 10px;
   }
   
   .post-title {

@@ -3,6 +3,7 @@
 .posts-header {
   text-align: center;
   margin-bottom: 50px;
+  padding-top: 30px;
 }
 
 .posts-header h1 {
@@ -21,6 +22,7 @@
   display: flex;
   flex-direction: column;
   gap: 30px;
+  padding-bottom: 30px;
 }
 
 .post-card {
@@ -105,6 +107,106 @@
   transform: translateY(0);
 }
 
+/* Posts info styling */
+.posts-info {
+  font-size: 1rem;
+  color: var(--secondary, #666);
+  margin-top: 10px;
+}
+
+/* No posts styling */
+.no-posts {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--secondary, #666);
+}
+
+.no-posts h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: var(--text);
+}
+
+.no-posts p {
+  font-size: 1rem;
+}
+
+/* Pagination styling */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 50px;
+  padding: 30px 20px;
+}
+
+.pagination-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 12px 20px;
+  background: var(--secondary);
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background: var(--tertiary);
+  color: var(--primary);
+  transform: translateY(-1px);
+}
+
+.pagination-btn.disabled {
+  background: rgba(var(--secondary-rgb, 200, 200, 200), 0.3);
+  color: var(--secondary, #666);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pagination-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  background: var(--primary);
+  color: var(--text);
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.pagination-page:hover:not(.active) {
+  background: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.pagination-page.active {
+  background: var(--tertiary);
+  color: var(--primary);
+  border-color: var(--tertiary);
+  font-weight: 600;
+}
+
+.pagination-ellipsis {
+  padding: 0 8px;
+  color: var(--secondary, #666);
+  font-weight: bold;
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .post-card {
@@ -127,6 +229,25 @@
   .posts-header p {
     font-size: 1rem;
   }
+  
+  /* Pagination responsive */
+  .pagination {
+    gap: 10px;
+    margin-top: 40px;
+    padding: 20px 10px;
+    flex-wrap: wrap;
+  }
+  
+  .pagination-btn {
+    min-width: 100px;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+  
+  .pagination-page {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -140,5 +261,27 @@
   
   .posts-header h1 {
     font-size: 1.8rem;
+  }
+  
+  /* Mobile pagination */
+  .pagination {
+    gap: 8px;
+    padding: 15px 5px;
+  }
+  
+  .pagination-btn {
+    min-width: 80px;
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .pagination-page {
+    width: 35px;
+    height: 35px;
+    font-size: 0.9rem;
+  }
+  
+  .pagination-pages {
+    gap: 5px;
   }
 }

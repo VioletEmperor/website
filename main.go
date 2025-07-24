@@ -68,13 +68,13 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 		if conf.GCSBucketName == "" {
 			log.Fatal("GCS_BUCKET_NAME is required when using GCS storage mode")
 		}
-		
+
 		// Create GCS client
 		gcsClient, err := storage.NewClient(ctx)
 		if err != nil {
 			return err
 		}
-		
+
 		contentService = content.NewGCSService(gcsClient, conf.GCSBucketName, conf.GCSPrefix)
 		log.Printf("Using GCS content service with bucket: %s, prefix: %s", conf.GCSBucketName, conf.GCSPrefix)
 	} else {
@@ -116,7 +116,7 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 
 	// Create main router that delegates to sub-routers
 	mainRouter := http.NewServeMux()
-	
+
 	server := &http.Server{
 		Addr:    ":" + conf.Port,
 		Handler: mainRouter,
@@ -125,11 +125,18 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 	fs := http.FileServer(http.Dir("static"))
 
 	// Admin routes - relative paths since mounted under /admin/
-	adminRouter.HandleFunc("GET /", env.AdminHandler)  
+	adminRouter.HandleFunc("GET /", env.AdminHandler)
 	adminRouter.HandleFunc("GET /login", env.AdminLoginPageHandler)
 	adminRouter.HandleFunc("POST /logout", env.AdminLogoutHandler)
 	adminRouter.HandleFunc("GET /dashboard", env.AdminDashboardHandler)
 	adminRouter.HandleFunc("POST /verify", env.AdminVerifyHandler)
+	
+	// Admin post management routes
+	adminRouter.HandleFunc("GET /posts", env.AdminListPostsHandler)
+	adminRouter.HandleFunc("GET /posts/{id}", env.AdminGetPostHandler)
+	adminRouter.HandleFunc("PUT /posts/{id}", env.AdminUpdatePostHandler)
+	adminRouter.HandleFunc("DELETE /posts/{id}", env.AdminDeletePostHandler)
+	adminRouter.HandleFunc("POST /posts/upload", env.AdminUploadPostHandler)
 
 	// Public routes - use specific patterns to avoid conflicts
 	publicRouter.HandleFunc("GET /{$}", env.RootHandler)
