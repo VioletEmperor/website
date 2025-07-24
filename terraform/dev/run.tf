@@ -99,6 +99,20 @@ resource "google_cloud_run_v2_service" "default" {
         }
       }
 
+      env {
+        name  = "STORAGE_MODE"
+        value = "gcs"
+      }
+
+      env {
+        name  = "GCS_BUCKET_NAME"
+        value = google_storage_bucket.posts.name
+      }
+
+      env {
+        name  = "GCS_PREFIX"
+        value = "posts/"
+      }
 
     }
     service_account = google_service_account.service_account.email
@@ -107,6 +121,7 @@ resource "google_cloud_run_v2_service" "default" {
   depends_on = [
     google_secret_manager_secret_version.database_host_version,
     google_secret_manager_secret_version.email_key_version,
-    google_secret_manager_secret_version.firebase_web_api_key_version
+    google_secret_manager_secret_version.firebase_web_api_key_version,
+    google_artifact_registry_repository.artifact_registry
   ]
 }

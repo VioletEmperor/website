@@ -13,3 +13,9 @@ resource "google_storage_bucket_object" "object" {
   name    = "test.txt"
   content = "testing terraform storage object"
 }
+
+resource "google_storage_bucket_iam_member" "posts_admin" {
+  bucket = google_storage_bucket.posts.name
+  role   = "roles/storage.objectAdmin"
+  member = "serviceAccount:${google_service_account.service_account.email}"
+}

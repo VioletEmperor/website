@@ -17,3 +17,9 @@ resource "google_service_account" "service_account" {
   account_id   = "service-account"
   display_name = "Service Account"
 }
+
+resource "google_project_iam_member" "cloudsql_client" {
+  project = var.project
+  role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}

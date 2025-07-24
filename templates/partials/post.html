@@ -4,10 +4,8 @@
     <h2 class="post-title">{{ .Title }}</h2>
     <div class="post-meta">
       <span class="post-author">By {{ .Author }}</span>
-      <span class="post-date">{{ .Created.Format "January 2, 2006" }}</span>
-      {{ if ne .Created .Edited }}
+      <span class="post-date">Created {{ .Created.Format "January 2, 2006" }}</span>
       <span class="post-edited">Edited {{ .Edited.Format "January 2, 2006" }}</span>
-      {{ end }}
     </div>
   </div>
   

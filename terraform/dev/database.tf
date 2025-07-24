@@ -23,5 +23,3 @@ resource "google_sql_user" "user" {
   name     = var.database_user
   password = var.database_password
 }
-
-resource "google_sql_da" "" {}
