@@ -1,12 +1,11 @@
 package handlers
 
 import (
+	"firebase.google.com/go/v4/auth"
 	"html/template"
 	"website/internal/config"
 	"website/internal/content"
 	"website/internal/posts"
-
-	"firebase.google.com/go/v4/auth"
 )
 
 type Env struct {

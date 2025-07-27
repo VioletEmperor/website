@@ -29,7 +29,7 @@ resource "google_secret_manager_secret" "database_user" {
 }
 
 resource "google_secret_manager_secret_version" "database_user_version" {
-  secret      = google_secret_manager_secret.database_host.id
+  secret      = google_secret_manager_secret.database_user.id
   secret_data = var.database_user
 }
 

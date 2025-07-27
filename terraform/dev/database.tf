@@ -15,7 +15,7 @@ resource "google_sql_database_instance" "instance" {
 
 resource "google_sql_database" "instance" {
   instance = google_sql_database_instance.instance.name
-  name     = "cloudsql-${var.database_name}"
+  name     = var.database_name
 }
 
 resource "google_sql_user" "user" {

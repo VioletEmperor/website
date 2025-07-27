@@ -7,7 +7,8 @@ repository=docker-registry
 image=cloudrun-image
 
 gcloud builds submit --region=${region} \
-  --tag ${region}-docker.pkg.dev/${project}/${repository}/${image}
+  --tag ${region}-docker.pkg.dev/${project}/${repository}/${image} \
+  .
 
 gcloud run deploy ${service} \
   --image ${region}-docker.pkg.dev/${project}/${repository}/${image}

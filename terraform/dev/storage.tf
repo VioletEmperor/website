@@ -6,6 +6,7 @@ resource "google_storage_bucket" "posts" {
   location                    = var.region
   name                        = local.bucket_name
   uniform_bucket_level_access = true
+  force_destroy               = true
 }
 
 resource "google_storage_bucket_object" "object" {

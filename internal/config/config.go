@@ -52,7 +52,7 @@ func GetConfig() (Config, error) {
 		return config, errors.New("missing environment variable DB_NAME")
 	}
 
-	config.URL = fmt.Sprintf("user=%s password=%s database=%s host=%s", user, password, name, host)
+	config.URL = fmt.Sprintf("user=%s password=%s dbname=%s host=%s sslmode=disable", user, password, name, host)
 
 	config.EmailKey = os.Getenv("EMAIL_KEY")
 

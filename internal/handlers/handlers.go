@@ -296,7 +296,7 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("sent: ", sent.Id)
 
-	if err := env.Templates["submit.html"].ExecuteTemplate(w, "submit.html", message); err != nil {
+	if err := env.Templates["partials/submit.html"].ExecuteTemplate(w, "partials/submit.html", message); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("failed to execute template:", err)
 		return

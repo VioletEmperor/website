@@ -22,11 +22,11 @@ services:
       - PROJECT_ID=${PROJECT_ID:?project id not set}
       - FIREBASE_WEB_API_KEY=${FIREBASE_WEB_API_KEY:?firebase web api key not set}
       - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
-      - PORT=8080
+      - PORT=${PORT:?port not set}
     networks:
       - mynet
     ports:
-      - "80:8080"
+      - "80:80"
     volumes:
       # Mount gcloud credentials for Firebase Auth
       - ~/.config/gcloud:/root/.config/gcloud:ro
