@@ -44,5 +44,18 @@ func Parse() map[string]*template.Template {
 		templates[name] = template.Must(tmpl.ParseFiles(file))
 	}
 
+	// Also add partials as separate templates for HTMX requests
+	partialFiles, err := filepath.Glob("templates/partials/*.html")
+	if err != nil {
+		panic(err)
+	}
+
+	for _, file := range partialFiles {
+		name := "partials/" + filepath.Base(file)
+		// For partials, we just need the base template functionality
+		tmpl := template.Must(baseTemplate.Clone())
+		templates[name] = template.Must(tmpl.ParseFiles(file))
+	}
+
 	return templates
 }

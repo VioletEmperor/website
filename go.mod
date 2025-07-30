@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go/storage v1.53.0
 	firebase.google.com/go/v4 v4.17.0
 	github.com/jackc/pgx/v5 v5.7.5
+	github.com/pashagolub/pgxmock/v4 v4.8.0
 	github.com/resend/resend-go/v2 v2.21.0
 )
 

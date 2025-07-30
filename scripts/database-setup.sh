@@ -10,7 +10,7 @@ for arg in "$@"; do
 done
 
 instance_name=cloudsql-instance-database
-database_name=cloudsql-database
+database_name=database
 database_user=$1
 
 gcloud sql connect ${instance_name} --database ${database_name} --user ${database_user} <<EOF

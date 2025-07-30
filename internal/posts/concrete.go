@@ -4,11 +4,19 @@ import (
 	"context"
 	"fmt"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// PoolInterface defines the methods we need from pgxpool.Pool
+type PoolInterface interface {
+	Query(ctx context.Context, sql string, args ...interface{}) (pgx.Rows, error)
+	QueryRow(ctx context.Context, sql string, args ...interface{}) pgx.Row
+	Exec(ctx context.Context, sql string, args ...interface{}) (pgconn.CommandTag, error)
+}
+
 type ConcreteRepository struct {
-	Pool *pgxpool.Pool
+	Pool PoolInterface
 }
 
 func New(pool *pgxpool.Pool) ConcreteRepository {

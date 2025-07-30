@@ -296,7 +296,7 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Println("sent: ", sent.Id)
 
-	if err := env.Templates["partials/submit.html"].ExecuteTemplate(w, "partials/submit.html", message); err != nil {
+	if err := env.Templates["partials/submit.html"].ExecuteTemplate(w, "submit", message); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Println("failed to execute template:", err)
 		return
@@ -521,7 +521,7 @@ func (env Env) AdminUploadPostHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// Handle new post creation
 		// For now, use a default author - you could get this from the authenticated user
-		author := "Admin"
+		author := "Adam Shkolnik"
 		err = env.PostsRepository.CreatePost(title, excerpt, bodyFilename, author)
 		if err != nil {
 			log.Printf("failed to create new post: %v", err)

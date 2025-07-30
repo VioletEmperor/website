@@ -22,7 +22,9 @@ func NewPaginationInfo(totalPosts, currentPage int) PaginationInfo {
 	if currentPage < 1 {
 		currentPage = 1
 	}
-	if totalPages > 0 && currentPage > totalPages {
+	if totalPages == 0 {
+		currentPage = 1
+	} else if currentPage > totalPages {
 		currentPage = totalPages
 	}
 	

@@ -12,6 +12,6 @@ CREATE TABLE public.posts (
     description varchar(500)
 );
 
-INSERT INTO public.posts VALUES
-(DEFAULT, 'POST A', DEFAULT, DEFAULT, DEFAULT, 'a.html', 'Short Description for Post A'),
-(DEFAULT, 'POST B', DEFAULT, DEFAULT, DEFAULT, 'b.html', 'Short Description for Post B');
+-- INSERT INTO public.posts VALUES
+-- (DEFAULT, 'POST A', DEFAULT, DEFAULT, DEFAULT, 'a.html', 'Short Description for Post A'),
+-- (DEFAULT, 'POST B', DEFAULT, DEFAULT, DEFAULT, 'b.html', 'Short Description for Post B');
