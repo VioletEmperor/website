@@ -16,6 +16,7 @@ import (
 	"website/internal/parse"
 	"website/internal/posts"
 
+	"cloud.google.com/go/firestore"
 	"cloud.google.com/go/storage"
 	firebase "firebase.google.com/go/v4"
 )
@@ -51,13 +52,31 @@ func run(ctx context.Context, cancel context.CancelFunc) error {
 
 	templates := parse.Parse()
 
-	pool, err := database.Connect(ctx, conf.URL)
-
-	if err != nil {
-		return err
+	// Initialize posts repository based on storage mode
+	var repo posts.Repository
+	if conf.StorageMode == "local" {
+		pool, err := database.Connect(ctx, conf.URL)
+		if err != nil {
+			return err
+		}
+		repo = posts.New(pool)
+		log.Println("Using PostgreSQL posts repository")
+	} else if conf.StorageMode == "gcs" {
+		firestoreClient, err := firestore.NewClient(ctx, conf.ProjectID)
+		if err != nil {
+			return err
+		}
+		repo = posts.NewFirestoreRepository(firestoreClient)
+		log.Println("Using Firestore posts repository")
+	} else {
+		// Default to local for unknown modes
+		pool, err := database.Connect(ctx, conf.URL)
+		if err != nil {
+			return err
+		}
+		repo = posts.New(pool)
+		log.Printf("Unknown storage mode '%s', falling back to PostgreSQL posts repository", conf.StorageMode)
 	}
-
-	repo := posts.New(pool)
 
 	// Initialize content service based on storage mode
 	var contentService content.ContentService

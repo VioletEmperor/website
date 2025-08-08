@@ -28,31 +28,36 @@ func GetConfig() (Config, error) {
 		return config, errors.New("missing environment variable PORT")
 	}
 
-	host := os.Getenv("DB_HOST")
-
-	if host == "" {
-		return config, errors.New("missing environment variable DB_HOST")
+	// Content storage configuration
+	config.StorageMode = os.Getenv("STORAGE_MODE")
+	if config.StorageMode == "" {
+		config.StorageMode = "local" // Default to local filesystem
 	}
 
-	user := os.Getenv("DB_USER")
+	// Database configuration (only required for local/PostgreSQL mode)
+	if config.StorageMode == "local" {
+		host := os.Getenv("DB_HOST")
+		if host == "" {
+			return config, errors.New("missing environment variable DB_HOST (required for local storage mode)")
+		}
 
-	if user == "" {
-		return config, errors.New("missing environment variable DB_USER")
+		user := os.Getenv("DB_USER")
+		if user == "" {
+			return config, errors.New("missing environment variable DB_USER (required for local storage mode)")
+		}
+
+		password := os.Getenv("DB_PASSWORD")
+		if password == "" {
+			return config, errors.New("missing environment variable DB_PASSWORD (required for local storage mode)")
+		}
+
+		name := os.Getenv("DB_NAME")
+		if name == "" {
+			return config, errors.New("missing environment variable DB_NAME (required for local storage mode)")
+		}
+
+		config.URL = fmt.Sprintf("user=%s password=%s dbname=%s host=%s sslmode=disable", user, password, name, host)
 	}
-
-	password := os.Getenv("DB_PASSWORD")
-
-	if password == "" {
-		return config, errors.New("missing environment variable DB_PASSWORD")
-	}
-
-	name := os.Getenv("DB_NAME")
-
-	if name == "" {
-		return config, errors.New("missing environment variable DB_NAME")
-	}
-
-	config.URL = fmt.Sprintf("user=%s password=%s dbname=%s host=%s sslmode=disable", user, password, name, host)
 
 	config.EmailKey = os.Getenv("EMAIL_KEY")
 
@@ -72,20 +77,17 @@ func GetConfig() (Config, error) {
 		return config, errors.New("missing environment variable FIREBASE_WEB_API_KEY")
 	}
 
-	// Content storage configuration
+	// Posts directory configuration
 	config.PostsDirectory = os.Getenv("POSTS_DIRECTORY")
 	if config.PostsDirectory == "" {
 		config.PostsDirectory = "posts" // Default to posts/ directory
 	}
 
-	config.StorageMode = os.Getenv("STORAGE_MODE")
-	if config.StorageMode == "" {
-		config.StorageMode = "local" // Default to local filesystem
-	}
-
 	// GCS configuration (only required if using GCS storage mode)
-	config.GCSBucketName = os.Getenv("GCS_BUCKET_NAME")
-	config.GCSPrefix = os.Getenv("GCS_PREFIX") // Optional prefix, e.g., "posts/"
+	if config.StorageMode == "gcs" {
+		config.GCSBucketName = os.Getenv("GCS_BUCKET_NAME")
+		config.GCSPrefix = os.Getenv("GCS_PREFIX") // Optional prefix, e.g., "posts/"
+	}
 
 	log.Println(config.URL)
 
