@@ -2,7 +2,7 @@
 resource "google_firestore_database" "database" {
   project         = var.project
   name            = "(default)"
-  location_id     = "us-central"
+  location_id     = "us-central1"
   type            = "FIRESTORE_NATIVE"
   deletion_policy = "DELETE"
 }
