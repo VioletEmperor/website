@@ -15,23 +15,6 @@ variable "zone" {
   default     = "us-central1-c"
 }
 
-variable "database_name" {
-  description = "The name of the database to connect to"
-  type        = string
-  sensitive   = true
-}
-
-variable "database_user" {
-  description = "The name of the default database user that will be created on the database"
-  type        = string
-  sensitive   = true
-}
-
-variable "database_password" {
-  description = "The password of the default database user that will be created on the database"
-  type        = string
-  sensitive   = true
-}
 
 variable "email_key" {
   description = "The email service API key"

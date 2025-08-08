@@ -9,21 +9,10 @@ output "cloud_run_service_name" {
   value       = google_cloud_run_v2_service.default.name
 }
 
-# Database Information
-output "database_instance_name" {
-  description = "Cloud SQL instance name"
-  value       = google_sql_database_instance.instance.name
-  sensitive   = true
-}
-
-output "database_connection_name" {
-  description = "Cloud SQL instance connection name"
-  value       = google_sql_database_instance.instance.connection_name
-}
-
-output "database_instance_ip" {
-  description = "Cloud SQL instance IP address"
-  value       = google_sql_database_instance.instance.ip_address
+# Firestore Database Information
+output "firestore_database_name" {
+  description = "Firestore database name"
+  value       = google_firestore_database.database.name
 }
 
 # Storage Information

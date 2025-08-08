@@ -15,12 +15,6 @@ resource "google_cloud_run_v2_service" "default" {
       max_instance_count = 1
     }
 
-    volumes {
-      name = "cloudsql"
-      cloud_sql_instance {
-        instances = [google_sql_database_instance.instance.connection_name]
-      }
-    }
 
     containers {
       image = "${var.region}-docker.pkg.dev/${var.project}/${google_artifact_registry_repository.artifact_registry.name}/${local.cloud_run_service_image}"
@@ -29,50 +23,6 @@ resource "google_cloud_run_v2_service" "default" {
         container_port = 80
       }
 
-      volume_mounts {
-        name       = "cloudsql"
-        mount_path = "/cloudsql"
-      }
-
-      env {
-        name = "DB_HOST"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.database_host.secret_id
-            version = "latest"
-          }
-        }
-      }
-
-      env {
-        name = "DB_USER"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.database_user.secret_id
-            version = "latest"
-          }
-        }
-      }
-
-      env {
-        name = "DB_PASSWORD"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.database_password.secret_id
-            version = "latest"
-          }
-        }
-      }
-
-      env {
-        name = "DB_NAME"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.database_name.secret_id
-            version = "latest"
-          }
-        }
-      }
 
       env {
         name = "EMAIL_KEY"
@@ -119,9 +69,9 @@ resource "google_cloud_run_v2_service" "default" {
   }
 
   depends_on = [
-    google_secret_manager_secret_version.database_host_version,
     google_secret_manager_secret_version.email_key_version,
     google_secret_manager_secret_version.firebase_web_api_key_version,
-    google_artifact_registry_repository.artifact_registry
+    google_artifact_registry_repository.artifact_registry,
+    google_firestore_database.database
   ]
 }

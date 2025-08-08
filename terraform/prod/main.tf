@@ -18,14 +18,39 @@ resource "google_service_account" "service_account" {
   display_name = "Service Account"
 }
 
-resource "google_project_iam_member" "cloudsql_client" {
+
+resource "google_project_iam_member" "datastore_user" {
   project = var.project
-  role    = "roles/cloudsql.client"
+  role    = "roles/datastore.user"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
 
-resource "google_project_iam_member" "cloudsql_instance_user" {
+resource "google_service_account_iam_member" "token_creator" {
+  service_account_id = google_service_account.service_account.name
+  role               = "roles/iam.serviceAccountTokenCreator"
+  member             = "user:owner@violetemperor.com"
+}
+
+resource "google_project_iam_member" "artifact_registry_writer" {
   project = var.project
-  role    = "roles/cloudsql.instanceUser"
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}
+
+resource "google_project_iam_member" "run_admin" {
+  project = var.project
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}
+
+resource "google_project_iam_member" "logging_log_writer" {
+  project = var.project
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.service_account.email}"
+}
+
+resource "google_project_iam_member" "storage_object_user" {
+  project = var.project
+  role    = "roles/storage.objectUser"
   member  = "serviceAccount:${google_service_account.service_account.email}"
 }
