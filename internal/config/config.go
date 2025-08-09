@@ -17,6 +17,7 @@ type Config struct {
 	StorageMode       string // "local" or "gcs"
 	GCSBucketName     string
 	GCSPrefix         string
+	TurnstileSecret   string
 }
 
 func GetConfig() (Config, error) {
@@ -87,6 +88,12 @@ func GetConfig() (Config, error) {
 	if config.StorageMode == "gcs" {
 		config.GCSBucketName = os.Getenv("GCS_BUCKET_NAME")
 		config.GCSPrefix = os.Getenv("GCS_PREFIX") // Optional prefix, e.g., "posts/"
+	}
+
+	// Turnstile configuration
+	config.TurnstileSecret = os.Getenv("TURNSTILE_SECRET")
+	if config.TurnstileSecret == "" {
+		return config, errors.New("missing environment variable TURNSTILE_SECRET")
 	}
 
 	log.Println(config.URL)

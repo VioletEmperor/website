@@ -64,6 +64,16 @@ resource "google_cloud_run_v2_service" "default" {
         value = "posts/"
       }
 
+      env {
+        name = "TURNSTILE_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.turnstile_secret.secret_id
+            version = "latest"
+          }
+        }
+      }
+
     }
     service_account = google_service_account.service_account.email
   }
@@ -71,6 +81,7 @@ resource "google_cloud_run_v2_service" "default" {
   depends_on = [
     google_secret_manager_secret_version.email_key_version,
     google_secret_manager_secret_version.firebase_web_api_key_version,
+    google_secret_manager_secret_version.turnstile_secret_version,
     google_artifact_registry_repository.artifact_registry,
     google_firestore_database.database
   ]

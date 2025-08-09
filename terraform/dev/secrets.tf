@@ -41,3 +41,24 @@ resource "google_secret_manager_secret_iam_member" "firebase_web_api_key_policy"
   depends_on = [google_secret_manager_secret.firebase_web_api_key]
 }
 
+# TURNSTILE_SECRET
+resource "google_secret_manager_secret" "turnstile_secret" {
+  secret_id = "turnstile-secret"
+
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "turnstile_secret_version" {
+  secret      = google_secret_manager_secret.turnstile_secret.id
+  secret_data = var.turnstile_secret
+}
+
+resource "google_secret_manager_secret_iam_member" "turnstile_secret_policy" {
+  secret_id  = google_secret_manager_secret.turnstile_secret.id
+  role       = "roles/secretmanager.secretAccessor"
+  member     = "serviceAccount:${google_service_account.service_account.email}"
+  depends_on = [google_secret_manager_secret.turnstile_secret]
+}
+

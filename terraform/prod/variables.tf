@@ -28,3 +28,9 @@ variable "firebase_web_api_key" {
   sensitive   = true
 }
 
+variable "turnstile_secret" {
+  description = "Cloudflare Turnstile secret key"
+  type        = string
+  sensitive   = true
+}
+

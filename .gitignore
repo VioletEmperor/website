@@ -4,3 +4,4 @@
 *.tfvars
 *.tfstate*
 *.terraform*
+cloudflare.txt

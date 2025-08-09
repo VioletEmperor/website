@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -9,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"net/mail"
+	"net/url"
 	"strconv"
 	"strings"
 	"website/internal/posts"
@@ -242,6 +244,14 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 	message.Subject = strings.TrimSpace(r.FormValue("subject"))
 	message.Message = strings.TrimSpace(r.FormValue("message"))
 
+	// Check honeypot field (should be empty for legitimate users)
+	honeypot := strings.TrimSpace(r.FormValue("website"))
+	if honeypot != "" {
+		log.Printf("honeypot field filled by potential bot: %s", honeypot)
+		http.Error(w, "Invalid form submission", http.StatusBadRequest)
+		return
+	}
+
 	// Validate required fields
 	if message.Name == "" || message.Email == "" || message.Subject == "" || message.Message == "" {
 		log.Println("missing required form fields")
@@ -253,6 +263,20 @@ func (env Env) MessageHandler(w http.ResponseWriter, r *http.Request) {
 	if _, err := mail.ParseAddress(message.Email); err != nil {
 		log.Println("invalid email format:", message.Email)
 		http.Error(w, "Invalid email format", http.StatusBadRequest)
+		return
+	}
+
+	// Verify Turnstile token
+	turnstileToken := strings.TrimSpace(r.FormValue("cf-turnstile-response"))
+	if turnstileToken == "" {
+		log.Println("missing turnstile token")
+		http.Error(w, "Please complete the security challenge", http.StatusBadRequest)
+		return
+	}
+
+	if !env.verifyTurnstile(turnstileToken) {
+		log.Println("turnstile verification failed")
+		http.Error(w, "Security verification failed. Please try again", http.StatusBadRequest)
 		return
 	}
 
@@ -561,4 +585,34 @@ func (env Env) verifyAdminAuth(w http.ResponseWriter, r *http.Request) bool {
 	}
 
 	return true
+}
+
+// Helper function to verify Turnstile token
+func (env Env) verifyTurnstile(token string) bool {
+	// Prepare the request data
+	data := url.Values{}
+	data.Set("secret", env.Config.TurnstileSecret)
+	data.Set("response", token)
+
+	// Make request to Cloudflare's verification endpoint
+	resp, err := http.Post("https://challenges.cloudflare.com/turnstile/v0/siteverify",
+		"application/x-www-form-urlencoded",
+		bytes.NewBufferString(data.Encode()))
+	if err != nil {
+		log.Printf("turnstile verification request failed: %v", err)
+		return false
+	}
+	defer resp.Body.Close()
+
+	// Parse the response
+	var result struct {
+		Success bool `json:"success"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Printf("failed to parse turnstile response: %v", err)
+		return false
+	}
+
+	return result.Success
 }

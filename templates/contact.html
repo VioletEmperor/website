@@ -1,4 +1,9 @@
 {{ template "base.start" . }}
+<script src="https://unpkg.com/htmx.org@2.0.4"
+        integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+        crossorigin="anonymous"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+<script src="/static/js/turnstile.js"></script>
 <div class="contact-container">
   <div class="contact-form-wrapper" id="contact-form">
     <h1>Contact Me</h1>
@@ -24,6 +29,18 @@
           minlength="50"></textarea>
       </div>
 
+      <!-- Honeypot field - invisible to users, catches bots -->
+      <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;">
+        <label for="website">Website (leave blank):</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <div
+              class="cf-turnstile"
+              data-sitekey="0x4AAAAAABqDaGt1CMIf8p6C"
+              data-callback="onTurnstileCallback"
+      ></div>
+
       <div class="form-buttons">
         <button type="reset" class="btn btn-secondary">Clear Form</button>
         <button type="submit" class="btn btn-primary">Send Message</button>
@@ -38,4 +55,5 @@
     </div>
   </div>
 </div>
+
 {{ template "base.end" . }}

@@ -21,6 +21,7 @@ services:
       - EMAIL_KEY=${EMAIL_KEY:?email key not set}
       - PROJECT_ID=${PROJECT_ID:?project id not set}
       - FIREBASE_WEB_API_KEY=${FIREBASE_WEB_API_KEY:?firebase web api key not set}
+      - TURNSTILE_SECRET=${TURNSTILE_SECRET:?turnstile secret not set}
       - GOOGLE_APPLICATION_CREDENTIALS=/root/.config/gcloud/application_default_credentials.json
       - PORT=${PORT:?port not set}
     networks:
